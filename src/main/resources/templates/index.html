@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Git Repository Migrator</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233B82F6'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+    <style>
+        :root {
+            --primary-color: #3B82F6;
+            --secondary-color: #10B981;
+            --accent-color: #F59E0B;
+            --error-color: #EF4444;
+            --warning-color: #F97316;
+            --success-color: #10B981;
+            --background-color: #F8FAFC;
+            --surface-color: #FFFFFF;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--background-color) 0%, #EEF2FF 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background: var(--surface-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .card-section {
+            padding: 2rem;
+        }
+
+        .card-section:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: var(--surface-color);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            min-height: 48px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563EB;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .repositories-section {
+            display: none;
+        }
+
+        .repositories-section.visible {
+            display: block;
+        }
+
+        .repo-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+            background: var(--surface-color);
+        }
+
+        .repo-item:hover {
+            border-color: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .repo-checkbox {
+            margin-right: 1rem;
+            transform: scale(1.2);
+        }
+
+        .repo-info h4 {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .repo-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .status-section {
+            background: var(--background-color);
+        }
+
+        .status-log {
+            background: #1F2937;
+            color: #F3F4F6;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #B91C1C;
+            border: 1px solid #FECACA;
+        }
+
+        .alert-success {
+            background: #F0FDF4;
+            color: #166534;
+            border: 1px solid #BBF7D0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Git Repository Migrator</h1>
+            <p>Automate the modernization and migration of your repositories to containerized OpenShift/Kubernetes deployments</p>
+        </div>
+
+        <div class="main-card">
+            <!-- Step 1: Repository Fetching -->
+            <div class="card-section">
+                <h2 class="section-title">
+                    <span>📋</span>
+                    Step 1: Fetch Repositories
+                </h2>
+                
+                <form id="fetchForm">
+                    <div class="form-group">
+                        <label for="apiUrl" class="form-label">Git Provider API URL</label>
+                        <input type="url" 
+                               id="apiUrl" 
+                               class="form-input" 
+                               placeholder="https://api.github.com/orgs/your-org/repos"
+                               required>
+                        <small style="color: var(--text-secondary); margin-top: 0.25rem; display: block;">
+                            Examples: GitHub: https://api.github.com/orgs/ORG/repos, GitLab: https://gitlab.com/api/v4/groups/GROUP_ID/projects
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="token" class="form-label">Personal Access Token</label>
+                        <input type="password" 
+                               id="token" 
+                               class="form-input" 
+                               placeholder="Enter your PAT (Personal Access Token)"
+                               required>
+                        <small style="color: var(--text-secondary); margin-top: 0.25rem; display: block;">
+                            🔒 This token is used only for API authentication and is never stored or logged
+                        </small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="fetchBtn">
+                        <span>🔍</span>
+                        Fetch Repositories
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 2: Repository Selection -->
+            <div class="card-section repositories-section" id="repositoriesSection">
+                <h2 class="section-title">
+                    <span>✅</span>
+                    Step 2: Select Repositories to Migrate
+                </h2>
+                
+                <div id="repositoriesList"></div>
+                
+                <button type="button" class="btn btn-success" id="migrateBtn" onclick="startMigration()">
+                    <span>🚀</span>
+                    Migrate Selected Repositories
+                </button>
+            </div>
+
+            <!-- Step 3: Migration Status -->
+            <div class="card-section status-section" id="statusSection" style="display: none;">
+                <h2 class="section-title">
+                    <span>📊</span>
+                    Migration Progress
+                </h2>
+                
+                <div class="progress-bar" id="progressBar" style="display: none;">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                </div>
+                
+                <div id="migrationStats" class="stats-grid" style="display: none;"></div>
+                
+                <div class="status-log" id="statusLog">Ready to start migration...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let repositories = [];
+        let migrationResults = [];
+
+        // Form submission for fetching repositories
+        document.getElementById('fetchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const token = document.getElementById('token').value.trim();
+            const fetchBtn = document.getElementById('fetchBtn');
+            
+            if (!apiUrl || !token) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
+            
+            // Show loading state
+            fetchBtn.disabled = true;
+            fetchBtn.innerHTML = '<span class="loading-spinner"></span> Fetching...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('apiUrl', apiUrl);
+                formData.append('token', token);
+                
+                const response = await fetch('/api/fetch-repos', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    repositories = data.repositories;
+                    displayRepositories(repositories);
+                    showAlert(`Successfully fetched ${data.count} repositories`, 'success');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching repositories:', error);
+                showAlert('Failed to fetch repositories. Please check your connection and try again.', 'error');
+            } finally {
+                // Reset button state
+                fetchBtn.disabled = false;
+                fetchBtn.innerHTML = '<span>🔍</span> Fetch Repositories';
+            }
+        });
+
+        function displayRepositories(repos) {
+            const repositoriesSection = document.getElementById('repositoriesSection');
+            const repositoriesList = document.getElementById('repositoriesList');
+            
+            if (repos.length === 0) {
+                repositoriesList.innerHTML = '<p style="color: var(--text-secondary);">No repositories found.</p>';
+                repositoriesSection.classList.add('visible');
+                return;
+            }
+            
+            let html = '';
+            repos.forEach((repo, index) => {
+                html += `
+                    <div class="repo-item">
+                        <input type="checkbox" 
+                               id="repo_${index}" 
+                               class="repo-checkbox" 
+                               value="${repo.cloneUrl}"
+                               onchange="updateMigrateButton()">
+                        <div class="repo-info">
+                            <h4>${repo.name}</h4>
+                            <p>${repo.description || 'No description available'}</p>
+                            <small style="color: var(--text-secondary);">${repo.language || 'Unknown language'} • ${repo.cloneUrl}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            repositoriesList.innerHTML = html;
+            repositoriesSection.classList.add('visible');
+            
+            // Add select all functionality
+            const selectAllHtml = `
+                <div style="margin-bottom: 1rem; padding: 1rem; background: var(--background-color); border-radius: 8px;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                        <strong>Select All Repositories (${repos.length})</strong>
+                    </label>
+                </div>
+            `;
+            repositoriesList.innerHTML = selectAllHtml + html;
+        }
+
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const repoCheckboxes = document.querySelectorAll('.repo-checkbox');
+            
+            repoCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            
+            updateMigrateButton();
+        }
+
+        function updateMigrateButton() {
+            const selectedRepos = document.querySelectorAll('.repo-checkbox:checked').length;
+            const migrateBtn = document.getElementById('migrateBtn');
+            
+            if (selectedRepos > 0) {
+                migrateBtn.disabled = false;
+                migrateBtn.innerHTML = `<span>🚀</span> Migrate ${selectedRepos} Selected Repository${selectedRepos > 1 ? 'ies' : 'y'}`;
+            } else {
+                migrateBtn.disabled = true;
+                migrateBtn.innerHTML = '<span>🚀</span> Migrate Selected Repositories';
+            }
+        }
+
+        async function startMigration() {
+            const selectedCheckboxes = document.querySelectorAll('.repo-checkbox:checked');
+            
+            if (selectedCheckboxes.length === 0) {
+                showAlert('Please select at least one repository to migrate', 'error');
+                return;
+            }
+            
+            const selectedUrls = Array.from(selectedCheckboxes).map(cb => cb.value);
+            const token = document.getElementById('token').value;
+            
+            // Show status section
+            const statusSection = document.getElementById('statusSection');
+            const progressBar = document.getElementById('progressBar');
+            const migrationStats = document.getElementById('migrationStats');
+            
+            statusSection.style.display = 'block';
+            progressBar.style.display = 'block';
+            migrationStats.style.display = 'none';
+            
+            // Disable migrate button
+            const migrateBtn = document.getElementById('migrateBtn');
+            migrateBtn.disabled = true;
+            migrateBtn.innerHTML = '<span class="loading-spinner"></span> Migration in Progress...';
+            
+            // Clear previous logs
+            const statusLog = document.getElementById('statusLog');
+            statusLog.textContent = 'Starting migration process...\n';
+            
+            try {
+                logMessage('🚀 Starting migration process...');
+                logMessage(`📊 Processing ${selectedUrls.length} repositories`);
+                
+                const response = await fetch('/api/migrate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        repositoryUrls: selectedUrls,
+                        token: token
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    migrationResults = data.results;
+                    displayMigrationResults(data);
+                    logMessage('✅ Migration process completed!');
+                } else {
+                    logMessage('❌ Migration process failed: ' + data.message);
+                    showAlert(data.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Migration error:', error);
+                logMessage('❌ Migration process failed due to network error');
+                showAlert('Migration failed. Please check your connection and try again.', 'error');
+            } finally {
+                // Reset migrate button
+                migrateBtn.disabled = false;
+                migrateBtn.innerHTML = '<span>🚀</span> Start New Migration';
+                
+                // Hide progress bar
+                progressBar.style.display = 'none';
+            }
+        }
+
+        function displayMigrationResults(data) {
+            const migrationStats = document.getElementById('migrationStats');
+            const progressFill = document.getElementById('progressFill');
+            
+            // Update progress bar
+            progressFill.style.width = '100%';
+            
+            // Display statistics
+            migrationStats.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${data.totalRepositories}</div>
+                    <div class="stat-label">Total Repositories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--success-color);">${data.successfulMigrations}</div>
+                    <div class="stat-label">Successful</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--error-color);">${data.failedMigrations}</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${Math.round((data.successfulMigrations / data.totalRepositories) * 100)}%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            `;
+            
+            migrationStats.style.display = 'grid';
+            
+            // Log detailed results
+            data.results.forEach(result => {
+                const status = result.success ? '✅' : '❌';
+                const framework = result.identifiedFramework ? ` (${result.identifiedFramework})` : '';
+                logMessage(`${status} ${result.repositoryName}${framework}: ${result.message}`);
+                
+                if (!result.success && result.errorDetails) {
+                    logMessage(`   Error details: ${result.errorDetails.split('\n')[0]}`);
+                }
+            });
+        }
+
+        function logMessage(message) {
+            const statusLog = document.getElementById('statusLog');
+            const timestamp = new Date().toLocaleTimeString();
+            statusLog.textContent += `[${timestamp}] ${message}\n`;
+            statusLog.scrollTop = statusLog.scrollHeight;
+        }
+
+        function showAlert(message, type) {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            
+            const icon = type === 'error' ? '⚠️' : '✅';
+            alertDiv.innerHTML = `<span>${icon}</span> ${message}`;
+            
+            // Insert alert at the top of the main card
+            const mainCard = document.querySelector('.main-card');
+            mainCard.insertBefore(alertDiv, mainCard.firstChild);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            logMessage('🎯 Git Repository Migrator initialized');
+            logMessage('📝 Please provide your Git API URL and Personal Access Token to get started');
+        });
+    </script>
+</body>
+</html>

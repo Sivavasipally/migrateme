@@ -1,0 +1,12 @@
+{
+  "name": "git-migrator",
+  "version": "1.0.0",
+  "description": "Git Repository Modernization Application",
+  "scripts": {
+    "dev": "echo 'Java Spring Boot application - use npm run build to compile'",
+    "build": "echo 'Building Java application...' && echo 'Note: This is a Java Spring Boot application. In a real environment, you would run: mvn spring-boot:run'",
+    "start": "echo 'Starting Java application...' && echo 'Note: This is a Java Spring Boot application. In a real environment, you would run: mvn spring-boot:run'"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
