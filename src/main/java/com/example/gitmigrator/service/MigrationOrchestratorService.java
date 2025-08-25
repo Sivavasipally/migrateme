@@ -5,8 +5,6 @@ import com.example.gitmigrator.model.MigrationRequest;
 import com.example.gitmigrator.model.MigrationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,16 +18,24 @@ import java.util.concurrent.TimeUnit;
  * Orchestrator service that coordinates the complete migration process.
  * Manages the clone-analyze-transform workflow for multiple repositories.
  */
-@Service
 public class MigrationOrchestratorService {
     
     private static final Logger logger = LoggerFactory.getLogger(MigrationOrchestratorService.class);
     
-    @Autowired
+    private GitApiService gitApiService;
     private GitOperationService gitOperationService;
-    
-    @Autowired
     private TransformationService transformationService;
+    
+    // Constructor for dependency injection
+    public MigrationOrchestratorService() {
+        // Services will be injected via setter methods
+    }
+    
+    public void setServices(GitApiService gitApiService, GitOperationService gitOperationService, TransformationService transformationService) {
+        this.gitApiService = gitApiService;
+        this.gitOperationService = gitOperationService;
+        this.transformationService = transformationService;
+    }
     
     private final ExecutorService executorService = Executors.newFixedThreadPool(5);
     

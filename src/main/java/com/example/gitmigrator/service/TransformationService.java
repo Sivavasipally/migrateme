@@ -14,8 +14,6 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -30,13 +28,15 @@ import java.util.Properties;
  * Core transformation service that analyzes repositories and applies framework-specific modifications.
  * Handles Spring Boot to Kubernetes/OpenShift migration with Helm charts.
  */
-@Service
 public class TransformationService {
     
     private static final Logger logger = LoggerFactory.getLogger(TransformationService.class);
     
-    @Autowired
     private Configuration freemarkerConfig;
+    
+    public void setFreemarkerConfig(Configuration freemarkerConfig) {
+        this.freemarkerConfig = freemarkerConfig;
+    }
     
     /**
      * Main entry point for processing a repository.

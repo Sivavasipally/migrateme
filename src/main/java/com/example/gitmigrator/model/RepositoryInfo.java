@@ -1,14 +1,20 @@
 package com.example.gitmigrator.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * Data Transfer Object representing repository information from Git APIs.
+ * Enhanced with JavaFX properties for UI binding.
  */
 public class RepositoryInfo {
     
     @JsonProperty("id")
     private Long id;
+    
+    // JavaFX property for table selection
+    private BooleanProperty selected = new SimpleBooleanProperty(false);
     
     @JsonProperty("name")
     private String name;
@@ -70,6 +76,11 @@ public class RepositoryInfo {
     
     public String getLanguage() { return language; }
     public void setLanguage(String language) { this.language = language; }
+    
+    // JavaFX selection property methods
+    public BooleanProperty selectedProperty() { return selected; }
+    public boolean isSelected() { return selected.get(); }
+    public void setSelected(boolean selected) { this.selected.set(selected); }
     
     @Override
     public String toString() {

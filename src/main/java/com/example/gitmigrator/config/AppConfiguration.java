@@ -2,32 +2,16 @@ package com.example.gitmigrator.config;
 
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
 
 /**
- * Application configuration for beans and services.
+ * Application configuration for services.
+ * Converted from Spring Configuration to plain Java configuration.
  */
-@org.springframework.context.annotation.Configuration
 public class AppConfiguration {
-    
-    /**
-     * RestTemplate configuration for making HTTP API calls.
-     */
-    @Bean
-    public RestTemplate restTemplate() {
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectTimeout(10000); // 10 seconds
-        factory.setReadTimeout(30000);    // 30 seconds
-        
-        return new RestTemplate(factory);
-    }
     
     /**
      * FreeMarker configuration for template processing.
      */
-    @Bean
     public Configuration freemarkerConfiguration() {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
         

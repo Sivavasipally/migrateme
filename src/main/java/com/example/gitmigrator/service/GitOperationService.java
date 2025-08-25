@@ -6,8 +6,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +16,6 @@ import java.nio.file.Paths;
  * Service for Git operations using JGit library.
  * Handles repository cloning, authentication, and local file management.
  */
-@Service
 public class GitOperationService {
     
     private static final Logger logger = LoggerFactory.getLogger(GitOperationService.class);

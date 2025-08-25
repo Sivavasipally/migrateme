@@ -1,0 +1,155 @@
+/* Git Repository Migrator JavaFX Styles */
+
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #f5f5f5;
+}
+
+.title {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 10px;
+}
+
+.primary-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.primary-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.primary-button:pressed {
+    -fx-background-color: #1f6391;
+}
+
+.primary-button:disabled {
+    -fx-background-color: #bdc3c7;
+    -fx-text-fill: #7f8c8d;
+    -fx-cursor: default;
+}
+
+.button {
+    -fx-background-color: #ecf0f1;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 6px 12px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1px;
+}
+
+.button:hover {
+    -fx-background-color: #d5dbdb;
+}
+
+.button:pressed {
+    -fx-background-color: #bdc3c7;
+}
+
+.text-field, .password-field {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #34495e;
+}
+
+.table-view .column-header {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #ecf0f1;
+}
+
+.titled-pane {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px;
+}
+
+.titled-pane > *.content {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+}
+
+.text-area {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: #ecf0f1;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 12px;
+}
+
+.text-area .content {
+    -fx-background-color: #2c3e50;
+}
+
+.progress-bar {
+    -fx-accent: #3498db;
+}
+
+.progress-bar .bar {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 4px;
+}
+
+.progress-bar .track {
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 4px;
+}
+
+.label {
+    -fx-text-fill: #2c3e50;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .corner {
+    -fx-background-color: #ecf0f1;
+}
