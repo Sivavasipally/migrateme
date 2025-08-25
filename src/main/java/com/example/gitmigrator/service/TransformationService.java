@@ -134,10 +134,10 @@ public class TransformationService {
         Map<String, Object> projectMetadata = extractSpringBootMetadata(repoPath);
         
         // Create Dockerfile
-        createDockerfile(repoPath, projectMetadata);
+        createDockerfile(repoPath, projectMetadata, FrameworkType.SPRING_BOOT);
         
         // Create Helm chart structure
-        createHelmChartStructure(repoPath, projectMetadata);
+        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.SPRING_BOOT);
         
         // Update pom.xml with container image build plugin
         updatePomWithJibPlugin(repoPath, projectMetadata);
@@ -256,12 +256,13 @@ public class TransformationService {
     }
     
     /**
-     * Creates a Dockerfile for the Spring Boot application.
+     * Creates a Dockerfile for the application based on framework type.
      */
-    private void createDockerfile(File repoPath, Map<String, Object> metadata) throws IOException, TemplateException {
-        logger.debug("Creating Dockerfile for: {}", repoPath.getName());
+    private void createDockerfile(File repoPath, Map<String, Object> metadata, FrameworkType framework) throws IOException, TemplateException {
+        logger.debug("Creating Dockerfile for: {} with framework: {}", repoPath.getName(), framework);
         
-        Template template = freemarkerConfig.getTemplate("Dockerfile.ftl");
+        String templatePath = getFrameworkTemplatePath(framework, "Dockerfile.ftl");
+        Template template = freemarkerConfig.getTemplate(templatePath);
         
         File dockerFile = new File(repoPath, "Dockerfile");
         try (FileWriter writer = new FileWriter(dockerFile)) {
@@ -272,10 +273,10 @@ public class TransformationService {
     }
     
     /**
-     * Creates the complete Helm chart structure with templates.
+     * Creates the complete Helm chart structure with templates based on framework type.
      */
-    private void createHelmChartStructure(File repoPath, Map<String, Object> metadata) throws IOException, TemplateException {
-        logger.debug("Creating Helm chart structure for: {}", repoPath.getName());
+    private void createHelmChartStructure(File repoPath, Map<String, Object> metadata, FrameworkType framework) throws IOException, TemplateException {
+        logger.debug("Creating Helm chart structure for: {} with framework: {}", repoPath.getName(), framework);
         
         // Create directories
         File helmDir = new File(repoPath, "helm");
@@ -283,33 +284,36 @@ public class TransformationService {
         templatesDir.mkdirs();
         
         // Create Chart.yaml
-        Template chartTemplate = freemarkerConfig.getTemplate("Chart.yaml.ftl");
+        String chartTemplatePath = getFrameworkTemplatePath(framework, "Chart.yaml.ftl");
+        Template chartTemplate = freemarkerConfig.getTemplate(chartTemplatePath);
         File chartFile = new File(helmDir, "Chart.yaml");
         try (FileWriter writer = new FileWriter(chartFile)) {
             chartTemplate.process(metadata, writer);
         }
         
         // Create values.yaml
-        Template valuesTemplate = freemarkerConfig.getTemplate("values.yaml.ftl");
+        String valuesTemplatePath = getFrameworkTemplatePath(framework, "values.yaml.ftl");
+        Template valuesTemplate = freemarkerConfig.getTemplate(valuesTemplatePath);
         File valuesFile = new File(helmDir, "values.yaml");
         try (FileWriter writer = new FileWriter(valuesFile)) {
             valuesTemplate.process(metadata, writer);
         }
         
         // Create template files
-        createHelmTemplate(templatesDir, "deployment.yaml.ftl", "deployment.yaml", metadata);
-        createHelmTemplate(templatesDir, "service.yaml.ftl", "service.yaml", metadata);
-        createHelmTemplate(templatesDir, "ingress.yaml.ftl", "ingress.yaml", metadata);
+        createHelmTemplate(templatesDir, framework, "deployment.yaml.ftl", "deployment.yaml", metadata);
+        createHelmTemplate(templatesDir, framework, "service.yaml.ftl", "service.yaml", metadata);
+        createHelmTemplate(templatesDir, framework, "ingress.yaml.ftl", "ingress.yaml", metadata);
         
         logger.debug("Created Helm chart structure at: {}", helmDir.getAbsolutePath());
     }
     
     /**
-     * Creates individual Helm template files.
+     * Creates individual Helm template files based on framework type.
      */
-    private void createHelmTemplate(File templatesDir, String templateName, String fileName, 
+    private void createHelmTemplate(File templatesDir, FrameworkType framework, String templateName, String fileName, 
                                    Map<String, Object> metadata) throws IOException, TemplateException {
-        Template template = freemarkerConfig.getTemplate(templateName);
+        String templatePath = getFrameworkTemplatePath(framework, templateName);
+        Template template = freemarkerConfig.getTemplate(templatePath);
         File templateFile = new File(templatesDir, fileName);
         try (FileWriter writer = new FileWriter(templateFile)) {
             template.process(metadata, writer);
@@ -373,24 +377,239 @@ public class TransformationService {
         }
     }
     
-    // Placeholder methods for other framework transformations
+    /**
+     * Gets the framework-specific template path.
+     */
+    private String getFrameworkTemplatePath(FrameworkType framework, String templateName) {
+        String frameworkDir;
+        switch (framework) {
+            case SPRING_BOOT:
+            case MAVEN_JAVA:
+            case GRADLE_JAVA:
+                frameworkDir = "springboot";
+                break;
+            case REACT:
+                frameworkDir = "react";
+                break;
+            case ANGULAR:
+                frameworkDir = "angular";
+                break;
+            case NODE_JS:
+                frameworkDir = "nodejs";
+                break;
+            default:
+                frameworkDir = "generic";
+                break;
+        }
+        
+        // Try framework-specific template first, fall back to Spring Boot if not found
+        String frameworkTemplate = frameworkDir + "/" + templateName;
+        try {
+            freemarkerConfig.getTemplate(frameworkTemplate);
+            return frameworkTemplate;
+        } catch (IOException e) {
+            logger.debug("Framework-specific template not found: {}, falling back to springboot template", frameworkTemplate);
+            return "springboot/" + templateName;
+        }
+    }
+    
+    /**
+     * Applies React-specific transformations.
+     */
     private void applyReactTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying React transformation (placeholder)");
-        // TODO: Implement React-specific transformations
+        logger.info("Applying React transformation to: {}", repoPath.getName());
+        
+        Map<String, Object> projectMetadata = extractReactMetadata(repoPath);
+        
+        // Create Dockerfile
+        createDockerfile(repoPath, projectMetadata, FrameworkType.REACT);
+        
+        // Create Helm chart structure
+        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.REACT);
+        
+        // Create nginx configuration
+        createNginxConfig(repoPath);
+        
+        logger.info("Successfully applied React transformation");
     }
     
+    /**
+     * Applies Angular-specific transformations.
+     */
     private void applyAngularTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying Angular transformation (placeholder)");
-        // TODO: Implement Angular-specific transformations
+        logger.info("Applying Angular transformation to: {}", repoPath.getName());
+        
+        Map<String, Object> projectMetadata = extractAngularMetadata(repoPath);
+        
+        // Create Dockerfile
+        createDockerfile(repoPath, projectMetadata, FrameworkType.ANGULAR);
+        
+        // Create Helm chart structure
+        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.ANGULAR);
+        
+        // Create nginx configuration
+        createNginxConfig(repoPath);
+        
+        logger.info("Successfully applied Angular transformation");
     }
     
+    /**
+     * Applies Node.js-specific transformations.
+     */
     private void applyNodeJsTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying Node.js transformation (placeholder)");
-        // TODO: Implement Node.js-specific transformations
+        logger.info("Applying Node.js transformation to: {}", repoPath.getName());
+        
+        Map<String, Object> projectMetadata = extractNodeJsMetadata(repoPath);
+        
+        // Create Dockerfile
+        createDockerfile(repoPath, projectMetadata, FrameworkType.NODE_JS);
+        
+        // Create Helm chart structure
+        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.NODE_JS);
+        
+        logger.info("Successfully applied Node.js transformation");
     }
     
+    /**
+     * Applies generic transformations.
+     */
     private void applyGenericTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying generic transformation (placeholder)");
-        // TODO: Implement generic transformations
+        logger.info("Applying generic transformation to: {}", repoPath.getName());
+        
+        Map<String, Object> projectMetadata = extractGenericMetadata(repoPath);
+        
+        // Create Dockerfile
+        createDockerfile(repoPath, projectMetadata, FrameworkType.UNKNOWN);
+        
+        // Create Helm chart structure
+        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.UNKNOWN);
+        
+        logger.info("Successfully applied generic transformation");
+    }
+    
+    /**
+     * Extracts metadata from React project's package.json.
+     */
+    private Map<String, Object> extractReactMetadata(File repoPath) {
+        return extractNodeBasedMetadata(repoPath, "React Application");
+    }
+    
+    /**
+     * Extracts metadata from Angular project's package.json.
+     */
+    private Map<String, Object> extractAngularMetadata(File repoPath) {
+        return extractNodeBasedMetadata(repoPath, "Angular Application");
+    }
+    
+    /**
+     * Extracts metadata from Node.js project's package.json.
+     */
+    private Map<String, Object> extractNodeJsMetadata(File repoPath) {
+        return extractNodeBasedMetadata(repoPath, "Node.js Application");
+    }
+    
+    /**
+     * Extracts metadata from Node-based projects (React, Angular, Node.js).
+     */
+    private Map<String, Object> extractNodeBasedMetadata(File repoPath, String defaultDescription) {
+        Map<String, Object> metadata = new HashMap<>();
+        
+        File packageJsonFile = new File(repoPath, "package.json");
+        if (!packageJsonFile.exists()) {
+            logger.warn("package.json not found, using default values");
+            metadata.put("artifactId", repoPath.getName());
+            metadata.put("name", repoPath.getName());
+            metadata.put("version", "1.0.0");
+            metadata.put("description", defaultDescription);
+            metadata.put("serverPort", "3000");
+            return metadata;
+        }
+        
+        try {
+            String packageContent = FileUtils.readFileToString(packageJsonFile, StandardCharsets.UTF_8);
+            // Simple JSON parsing - in production, use a proper JSON library
+            String name = extractJsonValue(packageContent, "name");
+            String version = extractJsonValue(packageContent, "version");
+            String description = extractJsonValue(packageContent, "description");
+            
+            metadata.put("artifactId", name != null ? name.replaceAll("[@/]", "") : repoPath.getName());
+            metadata.put("name", name != null ? name : repoPath.getName());
+            metadata.put("version", version != null ? version : "1.0.0");
+            metadata.put("description", description != null ? description : defaultDescription);
+            metadata.put("serverPort", "3000");
+            
+            logger.debug("Extracted Node.js metadata: {}", metadata);
+            
+        } catch (IOException e) {
+            logger.error("Failed to extract metadata from package.json", e);
+            metadata.put("artifactId", repoPath.getName());
+            metadata.put("name", repoPath.getName());
+            metadata.put("version", "1.0.0");
+            metadata.put("description", defaultDescription);
+            metadata.put("serverPort", "3000");
+        }
+        
+        return metadata;
+    }
+    
+    /**
+     * Extracts metadata for generic projects.
+     */
+    private Map<String, Object> extractGenericMetadata(File repoPath) {
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("artifactId", repoPath.getName());
+        metadata.put("name", repoPath.getName());
+        metadata.put("version", "1.0.0");
+        metadata.put("description", "Generic Application");
+        metadata.put("serverPort", "8080");
+        return metadata;
+    }
+    
+    /**
+     * Simple helper to extract JSON values (simplified approach).
+     */
+    private String extractJsonValue(String json, String key) {
+        String pattern = "\"" + key + "\"\\s*:\\s*\"([^\"]+)\"";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+        java.util.regex.Matcher m = p.matcher(json);
+        return m.find() ? m.group(1) : null;
+    }
+    
+    /**
+     * Creates nginx configuration for frontend applications.
+     */
+    private void createNginxConfig(File repoPath) throws IOException {
+        logger.debug("Creating nginx configuration for: {}", repoPath.getName());
+        
+        String nginxConfig = "events {\n" +
+                "    worker_connections 1024;\n" +
+                "}\n\n" +
+                "http {\n" +
+                "    include /etc/nginx/mime.types;\n" +
+                "    default_type application/octet-stream;\n\n" +
+                "    sendfile on;\n" +
+                "    keepalive_timeout 65;\n\n" +
+                "    server {\n" +
+                "        listen 80;\n" +
+                "        server_name localhost;\n" +
+                "        root /usr/share/nginx/html;\n" +
+                "        index index.html;\n\n" +
+                "        # Handle client-side routing\n" +
+                "        location / {\n" +
+                "            try_files $uri $uri/ /index.html;\n" +
+                "        }\n\n" +
+                "        # Security headers\n" +
+                "        add_header X-Frame-Options DENY;\n" +
+                "        add_header X-Content-Type-Options nosniff;\n" +
+                "        add_header X-XSS-Protection \"1; mode=block\";\n" +
+                "    }\n" +
+                "}";
+        
+        File nginxFile = new File(repoPath, "nginx.conf");
+        try (FileWriter writer = new FileWriter(nginxFile)) {
+            writer.write(nginxConfig);
+        }
+        
+        logger.debug("Created nginx configuration at: {}", nginxFile.getAbsolutePath());
     }
 }

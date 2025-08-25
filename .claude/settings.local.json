@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv /mnt/d/genai/migrateme/src/main/resources/templates/*.ftl /mnt/d/genai/migrateme/src/main/resources/templates/springboot/)",
+      "Bash(mvn:*)",
+      "Bash(java:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
