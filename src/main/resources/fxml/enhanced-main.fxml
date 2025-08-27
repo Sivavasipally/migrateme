@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:id="rootPane"
+            styleClass="root">
+   <!-- The enhanced controller will create all components programmatically -->
+   <!-- This provides a root BorderPane for the controller to work with -->
+</BorderPane>

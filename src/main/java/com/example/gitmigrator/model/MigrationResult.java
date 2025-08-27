@@ -10,8 +10,50 @@ public class MigrationResult {
     private boolean success;
     private String message;
     private String errorDetails;
+    private String errorMessage;
+
+    public String getErrorMessage() {
+        // Prefer explicit errorDetails, fall back to message
+        return (errorDetails != null && !errorDetails.isEmpty()) ? errorDetails : message;
+    }
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+	/** e.g., "kubernetes" or "openshift" */
+    private String targetFramework;
+
+    /** include Helm chart generation? */
+    private boolean includeHelm;
+
+    /** include Dockerfile generation? */
+    private boolean includeDockerfile;
     
-    public MigrationResult() {}
+    public String getTargetFramework() {
+		return targetFramework;
+	}
+
+	public void setTargetFramework(String targetFramework) {
+		this.targetFramework = targetFramework;
+	}
+
+	public boolean isIncludeHelm() {
+		return includeHelm;
+	}
+
+	public void setIncludeHelm(boolean includeHelm) {
+		this.includeHelm = includeHelm;
+	}
+
+	public boolean isIncludeDockerfile() {
+		return includeDockerfile;
+	}
+
+	public void setIncludeDockerfile(boolean includeDockerfile) {
+		this.includeDockerfile = includeDockerfile;
+	}
+
+	public MigrationResult() {}
     
     public MigrationResult(String repositoryName, FrameworkType identifiedFramework, 
                           boolean success, String message) {

@@ -153,3 +153,989 @@
 .scroll-pane .corner {
     -fx-background-color: #ecf0f1;
 }
+
+/* Enhanced UI Components Styles */
+
+/* Drag and Drop Table */
+.drag-drop-table {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.drag-drop-table.drag-over {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+    -fx-background-color: #ebf3fd;
+}
+
+.drag-drop-table .table-row-cell.status-ready {
+    -fx-background-color: #f8f9fa;
+}
+
+.drag-drop-table .table-row-cell.status-processing {
+    -fx-background-color: #e3f2fd;
+}
+
+.drag-drop-table .table-row-cell.status-completed {
+    -fx-background-color: #e8f5e8;
+}
+
+.drag-drop-table .table-row-cell.status-failed {
+    -fx-background-color: #ffebee;
+}
+
+.empty-table-placeholder {
+    -fx-padding: 40px;
+    -fx-spacing: 10px;
+}
+
+.placeholder-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-fill: #34495e;
+}
+
+.placeholder-instruction {
+    -fx-font-size: 14px;
+    -fx-fill: #7f8c8d;
+}
+
+.placeholder-examples {
+    -fx-font-size: 12px;
+    -fx-fill: #95a5a6;
+    -fx-font-style: italic;
+}
+
+.repository-name {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.framework-icon {
+    -fx-font-size: 16px;
+}
+
+.framework-name {
+    -fx-text-fill: #34495e;
+}
+
+.complexity-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.status-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* Migration Configuration Panel */
+.migration-config-panel {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.config-title {
+    -fx-fill: #2c3e50;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.config-tab .tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #ecf0f1;
+}
+
+.config-tab .tab-pane .tab {
+    -fx-background-color: #ecf0f1;
+    -fx-text-base-color: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.config-tab .tab-pane .tab:selected {
+    -fx-background-color: #3498db;
+    -fx-text-base-color: white;
+}
+
+.config-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 14px;
+}
+
+.config-combo {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 10px;
+}
+
+.config-combo:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+}
+
+.config-field {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 10px;
+    -fx-pref-width: 120px;
+}
+
+.config-field:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+}
+
+.config-spinner {
+    -fx-pref-width: 80px;
+}
+
+.config-checkbox {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.checkbox-description {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 12px;
+    -fx-padding: 0 0 0 25px;
+}
+
+.config-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6px 12px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.config-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.config-button-danger {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6px 12px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.config-button-danger:hover {
+    -fx-background-color: #c0392b;
+}
+
+.template-button {
+    -fx-background-color: #9b59b6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-pref-width: 200px;
+}
+
+.template-button:hover {
+    -fx-background-color: #8e44ad;
+}
+
+.platform-description {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #495057;
+}
+
+.template-preview {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #495057;
+}
+
+.config-textarea {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 12px;
+}
+
+.config-textarea:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 2px;
+}
+
+.custom-settings-table {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.custom-settings-table .column-header-background {
+    -fx-background-color: #34495e;
+}
+
+.custom-settings-table .column-header {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.validation-label {
+    -fx-font-weight: bold;
+    -fx-padding: 8px 12px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.validation-error {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #c62828;
+    -fx-border-color: #ef5350;
+}
+
+.validation-success {
+    -fx-background-color: #e8f5e8;
+    -fx-text-fill: #2e7d32;
+    -fx-border-color: #66bb6a;
+}
+
+/* Enhanced Main Controller Styles */
+.main-container {
+    -fx-background-color: #f8f9fa;
+}
+
+.main-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.main-title {
+    -fx-fill: #2c3e50;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.section-title {
+    -fx-fill: #34495e;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.log-area {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: #ecf0f1;
+    -fx-font-family: "Consolas", "Monaco", "Courier New", monospace;
+    -fx-font-size: 12px;
+    -fx-border-color: #34495e;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.log-area .content {
+    -fx-background-color: #2c3e50;
+}
+
+.status-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Separator styling */
+.separator .line {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px 0 0 0;
+}
+/*
+ File Preview Component Styles */
+.section-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 5 0 5 0;
+}
+
+/* File Tree Styles */
+.file-modified {
+    -fx-text-fill: #ff9800;
+    -fx-font-weight: bold;
+}
+
+.file-new {
+    -fx-text-fill: #4caf50;
+    -fx-font-weight: bold;
+}
+
+/* Code Editor Styles */
+.code-editor {
+    -fx-font-family: "Courier New", "Monaco", "Menlo", monospace;
+    -fx-font-size: 12px;
+    -fx-background-color: #ffffff;
+}
+
+.code-editor .paragraph-box:has-caret {
+    -fx-background-color: #f0f8ff;
+}
+
+.code-editor .paragraph-text {
+    -fx-fill: #000000;
+}
+
+/* Syntax Highlighting Styles */
+.keyword {
+    -fx-fill: #0000ff;
+    -fx-font-weight: bold;
+}
+
+.comment {
+    -fx-fill: #008000;
+    -fx-font-style: italic;
+}
+
+.string {
+    -fx-fill: #a31515;
+}
+
+.number {
+    -fx-fill: #098658;
+}
+
+.boolean {
+    -fx-fill: #0000ff;
+    -fx-font-weight: bold;
+}
+
+.key {
+    -fx-fill: #0451a5;
+    -fx-font-weight: bold;
+}
+
+.tag {
+    -fx-fill: #800000;
+}
+
+.attribute {
+    -fx-fill: #ff0000;
+}
+
+.variable {
+    -fx-fill: #795e26;
+}
+
+.brace {
+    -fx-fill: #000000;
+    -fx-font-weight: bold;
+}
+
+/* Diff Viewer Styles */
+.diff-label {
+    -fx-font-weight: bold;
+    -fx-padding: 5;
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.diff-original {
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 1 0 0;
+}
+
+.diff-modified {
+    -fx-border-color: #e0e0e0;
+}
+
+.diff-scroll-pane {
+    -fx-background-color: #ffffff;
+}
+
+.diff-added {
+    -fx-background-color: #e8f5e8;
+    -fx-border-color: #4caf50;
+    -fx-border-width: 0 0 0 3;
+}
+
+.diff-removed {
+    -fx-background-color: #ffeaea;
+    -fx-border-color: #f44336;
+    -fx-border-width: 0 0 0 3;
+}
+
+.diff-modified {
+    -fx-background-color: #fff3e0;
+    -fx-border-color: #ff9800;
+    -fx-border-width: 0 0 0 3;
+}
+/
+* Progress Tracking Styles */
+.progress-tracking-component {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.operation-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.overall-progress {
+    -fx-accent: #007bff;
+}
+
+.overall-section .status-label {
+    -fx-font-size: 12px;
+    -fx-padding: 0 0 0 10px;
+}
+
+.status-completed {
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+}
+
+.status-failed {
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+}
+
+.status-in-progress {
+    -fx-text-fill: #007bff;
+    -fx-font-weight: bold;
+}
+
+.repository-container {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-padding: 5px;
+}
+
+.repository-scroll {
+    -fx-background-color: transparent;
+}
+
+.repository-progress-row {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 0 0 1px 0;
+    -fx-alignment: center-left;
+}
+
+.repository-progress-row:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.row-completed {
+    -fx-background-color: #d4edda;
+}
+
+.row-failed {
+    -fx-background-color: #f8d7da;
+}
+
+.row-in-progress {
+    -fx-background-color: #cce7ff;
+}
+
+.repository-progress-row .repository-name {
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.repository-progress-row .repository-status {
+    -fx-text-fill: #6c757d;
+}
+
+.repository-progress-row .repository-time {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 11px;
+}
+
+.progress-tracking-component .log-area {
+    -fx-font-family: "Consolas", "Monaco", "Courier New", monospace;
+    -fx-font-size: 11px;
+    -fx-background-color: #2d3748;
+    -fx-text-fill: #e2e8f0;
+    -fx-border-color: #4a5568;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+/* Log Filter Styles */
+.log-filter-component {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.search-field {
+    -fx-pref-width: 200px;
+}
+
+.level-filter, .repository-filter {
+    -fx-pref-width: 120px;
+}
+
+.clear-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-padding: 5px 10px;
+}
+
+.clear-button:hover {
+    -fx-background-color: #5a6268;
+}
+
+/* Validation Indicator Styles */
+.validation-indicator {
+    -fx-padding: 2px 6px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.validation-indicator.valid {
+    -fx-background-color: #d4edda;
+    -fx-text-fill: #155724;
+    -fx-border-color: #c3e6cb;
+}
+
+.validation-indicator.invalid {
+    -fx-background-color: #f8d7da;
+    -fx-text-fill: #721c24;
+    -fx-border-color: #f5c6cb;
+}
+
+.validation-indicator.warning {
+    -fx-background-color: #fff3cd;
+    -fx-text-fill: #856404;
+    -fx-border-color: #ffeaa7;
+}
+/* Err
+or Reporting Component Styles */
+.error-report-component {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.error-title {
+    -fx-text-fill: #dc3545;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.error-category {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.error-severity {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.severity-low {
+    -fx-text-fill: #28a745;
+}
+
+.severity-medium {
+    -fx-text-fill: #ffc107;
+}
+
+.severity-high {
+    -fx-text-fill: #fd7e14;
+}
+
+.severity-critical {
+    -fx-text-fill: #dc3545;
+}
+
+.error-description {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 12px;
+}
+
+.technical-details {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 11px;
+}
+
+.suggested-actions {
+    -fx-background-color: #e7f3ff;
+    -fx-border-color: #b3d9ff;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.suggested-actions .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0056b3;
+    -fx-font-size: 12px;
+}
+
+.suggested-actions .list-cell:selected {
+    -fx-background-color: #cce7ff;
+    -fx-text-fill: #004085;
+}
+
+.documentation-list {
+    -fx-background-color: #f0f8f0;
+    -fx-border-color: #c3e6c3;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.documentation-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #155724;
+    -fx-font-size: 12px;
+}
+
+.documentation-list .list-cell:selected {
+    -fx-background-color: #d4edda;
+    -fx-text-fill: #0a3622;
+}
+
+.recovery-options {
+    -fx-background-color: #fff8e1;
+    -fx-border-color: #ffecb3;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px;
+}
+
+.auto-recovery-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.auto-recovery-button:hover {
+    -fx-background-color: #218838;
+}
+
+.auto-recovery-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.recovery-option-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 12px;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+
+.recovery-option-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.recovery-option-button:pressed {
+    -fx-background-color: #004085;
+}
+
+.recovery-success {
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+}
+
+.recovery-error {
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+}
+
+/* Error Dialog Styles */
+.error-dialog {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dc3545;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.error-dialog .header-panel {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px;
+}
+
+.error-dialog .content-panel {
+    -fx-padding: 15px;
+}
+
+/* Progress Tracking Integration */
+.progress-error-indicator {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-min-width: 20px;
+    -fx-min-height: 20px;
+    -fx-max-width: 20px;
+    -fx-max-height: 20px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.progress-warning-indicator {
+    -fx-background-color: #ffc107;
+    -fx-text-fill: #212529;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-min-width: 20px;
+    -fx-min-height: 20px;
+    -fx-max-width: 20px;
+    -fx-max-height: 20px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+/* Error Reporting Component Styles */
+.error-report-component {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e74c3c;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+.error-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e74c3c;
+}
+
+.error-category {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-weight: semi-bold;
+}
+
+.error-severity {
+    -fx-font-size: 12px;
+    -fx-font-weight: semi-bold;
+}
+
+.severity-low {
+    -fx-text-fill: #27ae60;
+}
+
+.severity-medium {
+    -fx-text-fill: #f39c12;
+}
+
+.severity-high {
+    -fx-text-fill: #e67e22;
+}
+
+.severity-critical {
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+}
+
+.error-description {
+    -fx-background-color: #fdf2f2;
+    -fx-border-color: #f5c6cb;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-text-fill: #721c24;
+}
+
+.technical-details {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-text-fill: #495057;
+    -fx-font-family: "Consolas", "Monaco", monospace;
+    -fx-font-size: 12px;
+}
+
+.suggested-actions {
+    -fx-background-color: #d1ecf1;
+    -fx-border-color: #bee5eb;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.suggested-actions .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0c5460;
+    -fx-padding: 4px 8px;
+}
+
+.suggested-actions .list-cell:selected {
+    -fx-background-color: #b8daff;
+    -fx-text-fill: #004085;
+}
+
+.documentation-list {
+    -fx-background-color: #fff3cd;
+    -fx-border-color: #ffeaa7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.documentation-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #856404;
+    -fx-padding: 4px 8px;
+}
+
+.documentation-list .list-cell:selected {
+    -fx-background-color: #fff3cd;
+    -fx-text-fill: #533f03;
+}
+
+.recovery-options {
+    -fx-spacing: 8px;
+    -fx-padding: 10px;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.auto-recovery-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.auto-recovery-button:hover {
+    -fx-background-color: #218838;
+}
+
+.auto-recovery-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.recovery-option-button {
+    -fx-background-color: #17a2b8;
+    -fx-text-fill: white;
+    -fx-padding: 6px 12px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 12px;
+}
+
+.recovery-option-button:hover {
+    -fx-background-color: #138496;
+}
+
+.recovery-option-button:pressed {
+    -fx-background-color: #117a8b;
+}
+
+.recovery-success {
+    -fx-text-fill: #155724;
+    -fx-background-color: #d4edda;
+    -fx-border-color: #c3e6cb;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 12px;
+}
+
+.recovery-error {
+    -fx-text-fill: #721c24;
+    -fx-background-color: #f8d7da;
+    -fx-border-color: #f5c6cb;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 12px;
+}
+
+/* Progress Tracking Component Status Styles */
+.status-in-progress {
+    -fx-text-fill: #17a2b8;
+    -fx-font-weight: bold;
+}
+
+.status-completed {
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+}
+
+.status-failed {
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+}
+
+.row-in-progress {
+    -fx-background-color: #e7f3ff;
+}
+
+.row-completed {
+    -fx-background-color: #e8f5e8;
+}
+
+.row-failed {
+    -fx-background-color: #ffe6e6;
+}

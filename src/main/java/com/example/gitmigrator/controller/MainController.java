@@ -125,6 +125,9 @@ public class MainController implements Initializable {
         apiUrlField.setPromptText("https://api.github.com/user/repos");
         tokenField.setPromptText("Enter your authentication token");
         logArea.setPromptText("Migration logs will appear here...");
+        
+        // Set default API URL for GitHub user repositories
+        apiUrlField.setText("https://api.github.com/user/repos");
     }
 
     /**
@@ -155,6 +158,7 @@ public class MainController implements Initializable {
                 Platform.runLater(() -> {
                     repositories.clear();
                     repositories.addAll(fetchedRepos);
+                    statusLabel.textProperty().unbind();
                     statusLabel.setText(String.format("Fetched %d repositories", fetchedRepos.size()));
                     appendLog(String.format("Successfully fetched %d repositories", fetchedRepos.size()));
                     progressBar.setVisible(false);
@@ -167,6 +171,7 @@ public class MainController implements Initializable {
                     Throwable exception = getException();
                     logger.error("Failed to fetch repositories", exception);
                     showAlert("Fetch Error", "Failed to fetch repositories: " + exception.getMessage());
+                    statusLabel.textProperty().unbind();
                     statusLabel.setText("Fetch failed");
                     progressBar.setVisible(false);
                 });
@@ -256,6 +261,7 @@ public class MainController implements Initializable {
                     long successful = results.stream().mapToLong(r -> r.isSuccess() ? 1 : 0).sum();
                     long failed = results.size() - successful;
                     
+                    statusLabel.textProperty().unbind();
                     statusLabel.setText(String.format("Migration completed: %d successful, %d failed", successful, failed));
                     appendLog(String.format("\n🎉 Migration process completed! Success: %d/%d", successful, results.size()));
                     progressBar.setVisible(false);
@@ -271,6 +277,7 @@ public class MainController implements Initializable {
                     Throwable exception = getException();
                     logger.error("Migration process failed", exception);
                     showAlert("Migration Error", "Migration process failed: " + exception.getMessage());
+                    statusLabel.textProperty().unbind();
                     statusLabel.setText("Migration failed");
                     progressBar.setVisible(false);
                 });

@@ -3,6 +3,7 @@ package com.example.gitmigrator.service;
 import com.example.gitmigrator.model.FrameworkType;
 import com.example.gitmigrator.model.MigrationRequest;
 import com.example.gitmigrator.model.MigrationResult;
+import com.example.gitmigrator.model.RepositoryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +103,11 @@ public class MigrationOrchestratorService {
             
             // Step 2: Analyze and transform repository
             logger.debug("Step 2: Analyzing and transforming repository {}", repositoryName);
-            FrameworkType framework = transformationService.processRepository(repoDir);
+            RepositoryInfo repoInfo = transformationService.analyzeRepository(repoDir.getAbsolutePath());
+            FrameworkType framework = repoInfo.getDetectedFramework();
+            
+            // Apply transformation
+            transformationService.transformRepository(repoDir.getAbsolutePath(), "kubernetes", true, true);
             
             // Step 3: Success
             result.setIdentifiedFramework(framework);

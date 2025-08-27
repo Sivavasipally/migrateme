@@ -32,29 +32,32 @@ public class GitOperationService {
      * Clones a repository to a local temporary directory.
      * 
      * @param repoUrl The repository URL to clone
-     * @param token Authentication token
+     * @param token Authentication token (optional, null for public repositories)
      * @return File object pointing to the cloned repository directory
      * @throws RuntimeException if cloning fails
      */
     public File cloneRepository(String repoUrl, String token) {
-        logger.info("Cloning repository: {}", repoUrl);
+        logger.info("Cloning repository: {} (with credentials: {})", repoUrl, token != null && !token.trim().isEmpty());
         
         // Extract repository name from URL
         String repoName = extractRepositoryName(repoUrl);
         String localPath = tempDirectory + "/" + repoName + "_" + System.currentTimeMillis();
         
         try {
-            // Prepare credentials
-            UsernamePasswordCredentialsProvider credentialsProvider = 
-                new UsernamePasswordCredentialsProvider("git", token);
-            
             // Clone the repository
-            Git git = Git.cloneRepository()
+            var cloneCommand = Git.cloneRepository()
                     .setURI(repoUrl)
                     .setDirectory(new File(localPath))
-                    .setCredentialsProvider(credentialsProvider)
-                    .setCloneAllBranches(false) // Only clone default branch for performance
-                    .call();
+                    .setCloneAllBranches(false); // Only clone default branch for performance
+            
+            // Add credentials only if token is provided (for private repositories)
+            if (token != null && !token.trim().isEmpty()) {
+                UsernamePasswordCredentialsProvider credentialsProvider = 
+                    new UsernamePasswordCredentialsProvider("git", token);
+                cloneCommand.setCredentialsProvider(credentialsProvider);
+            }
+            
+            Git git = cloneCommand.call();
             
             logger.info("Successfully cloned repository to: {}", localPath);
             

@@ -4,14 +4,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 /**
- * Data Transfer Object representing repository information from Git APIs.
- * Enhanced with JavaFX properties for UI binding.
+ * Enhanced Data Transfer Object representing repository information from Git APIs.
+ * Enhanced with JavaFX properties for UI binding and additional metadata.
  */
 public class RepositoryInfo {
     
     @JsonProperty("id")
-    private Long id;
+    private String id;
     
     // JavaFX property for table selection
     private BooleanProperty selected = new SimpleBooleanProperty(false);
@@ -40,6 +43,26 @@ public class RepositoryInfo {
     @JsonProperty("language")
     private String language;
     
+    // Enhanced metadata fields
+    private String localPath;
+    private FrameworkType detectedFramework;
+    
+    @JsonProperty("updated_at")
+    private LocalDateTime lastCommitDate;
+    
+    private String lastCommitMessage;
+    private int estimatedComplexity; // 1-5 scale
+    
+    @JsonProperty("size")
+    private long repositorySize;
+    
+    private List<String> languages;
+    private MigrationConfiguration migrationConfig;
+    private MigrationStatus status = MigrationStatus.NOT_STARTED;
+    
+    // Additional metadata for enhanced analysis
+    private java.util.Map<String, Object> additionalMetadata;
+    
     // Constructors
     public RepositoryInfo() {}
     
@@ -50,8 +73,13 @@ public class RepositoryInfo {
     }
     
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    
+    // Convenience method for setting numeric IDs
+    public void setId(Long id) { 
+        this.id = id != null ? id.toString() : null; 
+    }
     
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -65,6 +93,19 @@ public class RepositoryInfo {
     public String getCloneUrl() { return cloneUrl; }
     public void setCloneUrl(String cloneUrl) { this.cloneUrl = cloneUrl; }
     
+    // Convenience method for getting URL (fallback to cloneUrl if htmlUrl is not set)
+    public String getUrl() { 
+        return htmlUrl != null ? htmlUrl : cloneUrl; 
+    }
+    
+    // Convenience method for setting URL (sets both htmlUrl and cloneUrl if cloneUrl is not set)
+    public void setUrl(String url) { 
+        this.htmlUrl = url;
+        if (this.cloneUrl == null) {
+            this.cloneUrl = url;
+        }
+    }
+    
     public String getSshUrl() { return sshUrl; }
     public void setSshUrl(String sshUrl) { this.sshUrl = sshUrl; }
     
@@ -76,6 +117,37 @@ public class RepositoryInfo {
     
     public String getLanguage() { return language; }
     public void setLanguage(String language) { this.language = language; }
+    
+    // Enhanced metadata getters and setters
+    public String getLocalPath() { return localPath; }
+    public void setLocalPath(String localPath) { this.localPath = localPath; }
+    
+    public FrameworkType getDetectedFramework() { return detectedFramework; }
+    public void setDetectedFramework(FrameworkType detectedFramework) { this.detectedFramework = detectedFramework; }
+    
+    public LocalDateTime getLastCommitDate() { return lastCommitDate; }
+    public void setLastCommitDate(LocalDateTime lastCommitDate) { this.lastCommitDate = lastCommitDate; }
+    
+    public String getLastCommitMessage() { return lastCommitMessage; }
+    public void setLastCommitMessage(String lastCommitMessage) { this.lastCommitMessage = lastCommitMessage; }
+    
+    public int getEstimatedComplexity() { return estimatedComplexity; }
+    public void setEstimatedComplexity(int estimatedComplexity) { this.estimatedComplexity = estimatedComplexity; }
+    
+    public long getRepositorySize() { return repositorySize; }
+    public void setRepositorySize(long repositorySize) { this.repositorySize = repositorySize; }
+    
+    public List<String> getLanguages() { return languages; }
+    public void setLanguages(List<String> languages) { this.languages = languages; }
+    
+    public MigrationConfiguration getMigrationConfig() { return migrationConfig; }
+    public void setMigrationConfig(MigrationConfiguration migrationConfig) { this.migrationConfig = migrationConfig; }
+    
+    public MigrationStatus getStatus() { return status; }
+    public void setStatus(MigrationStatus status) { this.status = status; }
+    
+    public java.util.Map<String, Object> getAdditionalMetadata() { return additionalMetadata; }
+    public void setAdditionalMetadata(java.util.Map<String, Object> additionalMetadata) { this.additionalMetadata = additionalMetadata; }
     
     // JavaFX selection property methods
     public BooleanProperty selectedProperty() { return selected; }

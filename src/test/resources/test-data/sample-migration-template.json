@@ -1,0 +1,26 @@
+{
+  "name": "microservice-template",
+  "description": "Template for microservice applications",
+  "version": "1.0.0",
+  "targetPlatform": "kubernetes",
+  "optionalComponents": [
+    "dockerfile",
+    "helm",
+    "cicd",
+    "monitoring"
+  ],
+  "customSettings": {
+    "base-image": "openjdk:17-jre-slim",
+    "memory-limit": "512Mi",
+    "cpu-limit": "500m",
+    "replicas": "3",
+    "service-type": "ClusterIP",
+    "ingress-enabled": "true"
+  },
+  "enableValidation": true,
+  "metadata": {
+    "author": "Git Migrator",
+    "created": "2024-01-01T00:00:00Z",
+    "tags": ["microservice", "kubernetes", "spring-boot"]
+  }
+}

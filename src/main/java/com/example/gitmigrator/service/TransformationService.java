@@ -1,12 +1,12 @@
 package com.example.gitmigrator.service;
 
 import com.example.gitmigrator.model.FrameworkType;
+import com.example.gitmigrator.model.RepositoryInfo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
@@ -14,15 +14,17 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Core transformation service that analyzes repositories and applies framework-specific modifications.
@@ -34,115 +36,161 @@ public class TransformationService {
     
     private Configuration freemarkerConfig;
     
-    public void setFreemarkerConfig(Configuration freemarkerConfig) {
-        this.freemarkerConfig = freemarkerConfig;
+    // Cache for expensive analysis operations
+    private final Map<String, RepositoryAnalysis> analysisCache = new ConcurrentHashMap<>();
+    
+    // Language detection patterns
+    private static final Map<String, Pattern> LANGUAGE_PATTERNS = new HashMap<>();
+    static {
+        LANGUAGE_PATTERNS.put("Java", Pattern.compile(".*\\.java$", Pattern.CASE_INSENSITIVE));
+        LANGUAGE_PATTERNS.put("JavaScript", Pattern.compile(".*\\.(js|jsx)$", Pattern.CASE_INSENSITIVE));
+        LANGUAGE_PATTERNS.put("TypeScript", Pattern.compile(".*\\.(ts|tsx)$", Pattern.CASE_INSENSITIVE));
+        LANGUAGE_PATTERNS.put("Python", Pattern.compile(".*\\.py$", Pattern.CASE_INSENSITIVE));
+        LANGUAGE_PATTERNS.put("C#", Pattern.compile(".*\\.cs$", Pattern.CASE_INSENSITIVE));
     }
     
     /**
-     * Main entry point for processing a repository.
-     * Identifies the framework and applies appropriate transformations.
+     * Initialize the transformation service with FreeMarker configuration.
      */
-    public FrameworkType processRepository(File repoPath) {
-        logger.info("Processing repository: {}", repoPath.getName());
+    public TransformationService() {
+        initializeFreeMarker();
+    }
+    
+    /**
+     * Initialize FreeMarker configuration for template processing.
+     */
+    private void initializeFreeMarker() {
+        freemarkerConfig = new Configuration(Configuration.VERSION_2_3_32);
+        freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
+        freemarkerConfig.setDefaultEncoding("UTF-8");
+    }
+    
+    /**
+     * Analyzes a repository and returns enhanced metadata.
+     */
+    public RepositoryInfo analyzeRepository(String repositoryPath) {
+        logger.info("Analyzing repository: {}", repositoryPath);
         
-        try {
-            // Identify the primary framework
-            FrameworkType framework = identifyFramework(repoPath);
-            logger.info("Identified framework: {} for repository: {}", framework, repoPath.getName());
-            
-            // Apply framework-specific transformations
-            switch (framework) {
-                case SPRING_BOOT:
-                    applySpringBootHelmTransformation(repoPath);
-                    break;
-                case REACT:
-                    applyReactTransformation(repoPath);
-                    break;
-                case ANGULAR:
-                    applyAngularTransformation(repoPath);
-                    break;
-                case NODE_JS:
-                    applyNodeJsTransformation(repoPath);
-                    break;
-                default:
-                    logger.warn("No specific transformation available for framework: {}", framework);
-                    applyGenericTransformation(repoPath);
-                    break;
-            }
-            
-            return framework;
-            
-        } catch (Exception e) {
-            logger.error("Error processing repository {}: {}", repoPath.getName(), e.getMessage(), e);
-            throw new RuntimeException("Failed to process repository: " + e.getMessage(), e);
+        File repoDir = new File(repositoryPath);
+        if (!repoDir.exists() || !repoDir.isDirectory()) {
+            throw new IllegalArgumentException("Repository path does not exist or is not a directory: " + repositoryPath);
         }
+        
+        RepositoryInfo repoInfo = new RepositoryInfo();
+        repoInfo.setName(repoDir.getName());
+        repoInfo.setLocalPath(repositoryPath);
+        repoInfo.setCloneUrl("file://" + repositoryPath);
+        
+        // Detect framework type
+        FrameworkType framework = detectFrameworkType(repoDir);
+        repoInfo.setDetectedFramework(framework);
+        
+        // Extract metadata based on framework
+        Map<String, Object> metadata = extractFrameworkMetadata(repoDir, framework);
+        
+        // Calculate complexity and size
+        repoInfo.setEstimatedComplexity(calculateComplexity(repoDir, framework));
+        repoInfo.setRepositorySize(calculateDirectorySize(repoDir));
+        
+        // Detect languages
+        List<String> languages = detectLanguages(repoDir);
+        if (!languages.isEmpty()) {
+            repoInfo.setLanguage(languages.get(0)); // Primary language
+        }
+        
+        // Set last commit date (simplified - would use Git API in real implementation)
+        repoInfo.setLastCommitDate(LocalDateTime.now());
+        
+        logger.info("Repository analysis completed for: {}", repoInfo.getName());
+        return repoInfo;
     }
     
     /**
-     * Identifies the primary framework of a repository by examining key files.
+     * Transforms a repository by applying framework-specific changes.
      */
-    private FrameworkType identifyFramework(File repoPath) {
-        // Check for Spring Boot (pom.xml with spring-boot-starter)
-        File pomFile = new File(repoPath, "pom.xml");
-        if (pomFile.exists()) {
+    public void transformRepository(String repositoryPath, String targetFramework, boolean includeHelm, boolean includeDockerfile) throws IOException, TemplateException {
+        logger.info("Transforming repository: {} to target: {}", repositoryPath, targetFramework);
+        
+        File repoDir = new File(repositoryPath);
+        FrameworkType framework = detectFrameworkType(repoDir);
+        Map<String, Object> metadata = extractFrameworkMetadata(repoDir, framework);
+        
+        // Add target framework to metadata
+        metadata.put("targetFramework", targetFramework);
+        
+        if (includeDockerfile) {
+            createDockerfile(repoDir, metadata, framework);
+        }
+        
+        if (includeHelm) {
+            createHelmChartStructure(repoDir, metadata, framework);
+        }
+        
+        logger.info("Repository transformation completed for: {}", repositoryPath);
+    }
+    
+    /**
+     * Detects the framework type of a repository.
+     */
+    private FrameworkType detectFrameworkType(File repoDir) {
+        // Check for Spring Boot
+        if (new File(repoDir, "pom.xml").exists()) {
             try {
-                String pomContent = FileUtils.readFileToString(pomFile, StandardCharsets.UTF_8);
-                if (pomContent.contains("spring-boot-starter")) {
+                String pomContent = FileUtils.readFileToString(new File(repoDir, "pom.xml"), StandardCharsets.UTF_8);
+                if (pomContent.contains("spring-boot")) {
                     return FrameworkType.SPRING_BOOT;
-                } else {
-                    return FrameworkType.MAVEN_JAVA;
                 }
+                return FrameworkType.MAVEN_JAVA;
             } catch (IOException e) {
-                logger.warn("Failed to read pom.xml: {}", e.getMessage());
+                logger.debug("Failed to read pom.xml: {}", e.getMessage());
+            }
+        }
+        
+        // Check for Node.js projects
+        if (new File(repoDir, "package.json").exists()) {
+            try {
+                String packageContent = FileUtils.readFileToString(new File(repoDir, "package.json"), StandardCharsets.UTF_8);
+                if (packageContent.contains("\"react\"")) {
+                    return FrameworkType.REACT;
+                }
+                if (packageContent.contains("\"@angular/core\"")) {
+                    return FrameworkType.ANGULAR;
+                }
+                return FrameworkType.NODE_JS;
+            } catch (IOException e) {
+                logger.debug("Failed to read package.json: {}", e.getMessage());
             }
         }
         
         // Check for Gradle
-        File gradleFile = new File(repoPath, "build.gradle");
-        File gradleKtsFile = new File(repoPath, "build.gradle.kts");
-        if (gradleFile.exists() || gradleKtsFile.exists()) {
+        if (new File(repoDir, "build.gradle").exists() || new File(repoDir, "build.gradle.kts").exists()) {
             return FrameworkType.GRADLE_JAVA;
-        }
-        
-        // Check for Node.js projects
-        File packageJsonFile = new File(repoPath, "package.json");
-        if (packageJsonFile.exists()) {
-            try {
-                String packageContent = FileUtils.readFileToString(packageJsonFile, StandardCharsets.UTF_8);
-                if (packageContent.contains("\"react\"")) {
-                    return FrameworkType.REACT;
-                } else if (packageContent.contains("\"@angular/")) {
-                    return FrameworkType.ANGULAR;
-                } else {
-                    return FrameworkType.NODE_JS;
-                }
-            } catch (IOException e) {
-                logger.warn("Failed to read package.json: {}", e.getMessage());
-            }
         }
         
         return FrameworkType.UNKNOWN;
     }
     
     /**
-     * Applies Spring Boot to Kubernetes/Helm transformation.
+     * Extracts framework-specific metadata.
      */
-    private void applySpringBootHelmTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying Spring Boot Helm transformation to: {}", repoPath.getName());
+    private Map<String, Object> extractFrameworkMetadata(File repoDir, FrameworkType framework) {
+        Map<String, Object> metadata = new HashMap<>();
         
-        // Extract project metadata from pom.xml
-        Map<String, Object> projectMetadata = extractSpringBootMetadata(repoPath);
+        switch (framework) {
+            case SPRING_BOOT:
+                metadata = extractSpringBootMetadata(repoDir);
+                break;
+            case REACT:
+            case ANGULAR:
+            case NODE_JS:
+                metadata = extractNodeBasedMetadata(repoDir, framework.getDisplayName() + " Application");
+                break;
+            default:
+                metadata = extractGenericMetadata(repoDir);
+                break;
+        }
         
-        // Create Dockerfile
-        createDockerfile(repoPath, projectMetadata, FrameworkType.SPRING_BOOT);
-        
-        // Create Helm chart structure
-        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.SPRING_BOOT);
-        
-        // Update pom.xml with container image build plugin
-        updatePomWithJibPlugin(repoPath, projectMetadata);
-        
-        logger.info("Successfully applied Spring Boot Helm transformation");
+        return metadata;
     }
     
     /**
@@ -180,10 +228,7 @@ public class TransformationService {
             metadata.put("version", version != null ? version : "1.0.0");
             metadata.put("name", name != null ? name : artifactId);
             metadata.put("description", description != null ? description : "Spring Boot Application");
-            
-            // Extract server port from application properties if available
-            String serverPort = extractServerPort(repoPath);
-            metadata.put("serverPort", serverPort != null ? serverPort : "8080");
+            metadata.put("serverPort", "8080");
             
             logger.debug("Extracted metadata: {}", metadata);
             
@@ -202,57 +247,142 @@ public class TransformationService {
     }
     
     /**
-     * Helper method to extract text content from XML using XPath.
+     * Extracts metadata from Node-based projects (React, Angular, Node.js).
      */
-    private String getTextContent(Document document, String xpath) {
-        Node node = document.selectSingleNode(xpath);
-        return node != null ? node.getText() : null;
+    private Map<String, Object> extractNodeBasedMetadata(File repoPath, String defaultDescription) {
+        Map<String, Object> metadata = new HashMap<>();
+        
+        File packageJsonFile = new File(repoPath, "package.json");
+        if (!packageJsonFile.exists()) {
+            logger.warn("package.json not found, using default values");
+            metadata.put("artifactId", repoPath.getName());
+            metadata.put("name", repoPath.getName());
+            metadata.put("version", "1.0.0");
+            metadata.put("description", defaultDescription);
+            metadata.put("serverPort", "3000");
+            return metadata;
+        }
+        
+        try {
+            String packageContent = FileUtils.readFileToString(packageJsonFile, StandardCharsets.UTF_8);
+            String name = extractJsonValue(packageContent, "name");
+            String version = extractJsonValue(packageContent, "version");
+            String description = extractJsonValue(packageContent, "description");
+            
+            metadata.put("artifactId", name != null ? name.replaceAll("[@/]", "") : repoPath.getName());
+            metadata.put("name", name != null ? name : repoPath.getName());
+            metadata.put("version", version != null ? version : "1.0.0");
+            metadata.put("description", description != null ? description : defaultDescription);
+            metadata.put("serverPort", "3000");
+            
+            logger.debug("Extracted Node.js metadata: {}", metadata);
+            
+        } catch (IOException e) {
+            logger.error("Failed to extract metadata from package.json", e);
+            metadata.put("artifactId", repoPath.getName());
+            metadata.put("name", repoPath.getName());
+            metadata.put("version", "1.0.0");
+            metadata.put("description", defaultDescription);
+            metadata.put("serverPort", "3000");
+        }
+        
+        return metadata;
     }
     
     /**
-     * Extracts server port from application.properties or application.yml.
+     * Extracts metadata for generic projects.
      */
-    private String extractServerPort(File repoPath) {
-        // Check application.properties
-        File propsFile = new File(repoPath, "src/main/resources/application.properties");
-        if (propsFile.exists()) {
-            try {
-                Properties props = new Properties();
-                props.load(new FileInputStream(propsFile));
-                String port = props.getProperty("server.port");
-                if (port != null && !port.isEmpty()) {
-                    return port;
-                }
-            } catch (IOException e) {
-                logger.debug("Could not read application.properties: {}", e.getMessage());
-            }
+    private Map<String, Object> extractGenericMetadata(File repoPath) {
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("artifactId", repoPath.getName());
+        metadata.put("name", repoPath.getName());
+        metadata.put("version", "1.0.0");
+        metadata.put("description", "Generic Application");
+        metadata.put("serverPort", "8080");
+        return metadata;
+    }
+    
+    /**
+     * Calculates the complexity of a repository based on various factors.
+     */
+    private int calculateComplexity(File repoDir, FrameworkType framework) {
+        int complexity = 1; // Base complexity
+        
+        // Add complexity based on file count
+        int fileCount = countFiles(repoDir);
+        if (fileCount > 100) complexity++;
+        if (fileCount > 500) complexity++;
+        if (fileCount > 1000) complexity++;
+        
+        // Add complexity based on framework
+        switch (framework) {
+            case SPRING_BOOT:
+                complexity++; // Spring Boot projects are generally more complex
+                break;
+            case REACT:
+            case ANGULAR:
+                complexity++; // Frontend frameworks add complexity
+                break;
         }
         
-        // Check application.yml
-        File ymlFile = new File(repoPath, "src/main/resources/application.yml");
-        if (ymlFile.exists()) {
-            try {
-                String content = FileUtils.readFileToString(ymlFile, StandardCharsets.UTF_8);
-                // Simple regex to find server port in YAML
-                if (content.contains("server:") && content.contains("port:")) {
-                    // This is a simplified parser - in production, use a proper YAML library
-                    String[] lines = content.split("\n");
-                    boolean inServerSection = false;
-                    for (String line : lines) {
-                        if (line.trim().startsWith("server:")) {
-                            inServerSection = true;
-                        } else if (inServerSection && line.trim().startsWith("port:")) {
-                            String port = line.split(":")[1].trim();
-                            return port;
+        return Math.min(complexity, 5); // Cap at 5
+    }
+    
+    /**
+     * Calculates the total size of a directory in bytes.
+     */
+    private long calculateDirectorySize(File directory) {
+        long size = 0;
+        try {
+            size = Files.walk(Paths.get(directory.getAbsolutePath()))
+                    .filter(p -> p.toFile().isFile())
+                    .mapToLong(p -> p.toFile().length())
+                    .sum();
+        } catch (IOException e) {
+            logger.debug("Failed to calculate directory size: {}", e.getMessage());
+        }
+        return size;
+    }
+    
+    /**
+     * Detects programming languages used in the repository.
+     */
+    private List<String> detectLanguages(File repoDir) {
+        Map<String, Integer> languageCounts = new HashMap<>();
+        
+        try {
+            Files.walk(Paths.get(repoDir.getAbsolutePath()))
+                    .filter(Files::isRegularFile)
+                    .forEach(path -> {
+                        String fileName = path.getFileName().toString();
+                        for (Map.Entry<String, Pattern> entry : LANGUAGE_PATTERNS.entrySet()) {
+                            if (entry.getValue().matcher(fileName).matches()) {
+                                languageCounts.merge(entry.getKey(), 1, Integer::sum);
+                            }
                         }
-                    }
-                }
-            } catch (IOException e) {
-                logger.debug("Could not read application.yml: {}", e.getMessage());
-            }
+                    });
+        } catch (IOException e) {
+            logger.debug("Failed to detect languages: {}", e.getMessage());
         }
         
-        return null;
+        return languageCounts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .collect(ArrayList::new, (list, item) -> list.add(item), ArrayList::addAll);
+    }
+    
+    /**
+     * Counts the total number of files in a directory.
+     */
+    private int countFiles(File directory) {
+        try {
+            return (int) Files.walk(Paths.get(directory.getAbsolutePath()))
+                    .filter(Files::isRegularFile)
+                    .count();
+        } catch (IOException e) {
+            logger.debug("Failed to count files: {}", e.getMessage());
+            return 0;
+        }
     }
     
     /**
@@ -321,63 +451,6 @@ public class TransformationService {
     }
     
     /**
-     * Updates pom.xml to add Jib plugin for container image building.
-     */
-    private void updatePomWithJibPlugin(File repoPath, Map<String, Object> metadata) {
-        logger.debug("Updating pom.xml with Jib plugin for: {}", repoPath.getName());
-        
-        File pomFile = new File(repoPath, "pom.xml");
-        if (!pomFile.exists()) {
-            logger.warn("pom.xml not found, skipping Jib plugin addition");
-            return;
-        }
-        
-        try {
-            SAXReader reader = new SAXReader();
-            Document document = reader.read(pomFile);
-            
-            // Find or create build/plugins section
-            Element buildElement = (Element) document.selectSingleNode("//project/build");
-            if (buildElement == null) {
-                buildElement = ((Element) document.selectSingleNode("//project")).addElement("build");
-            }
-            
-            Element pluginsElement = (Element) buildElement.selectSingleNode("plugins");
-            if (pluginsElement == null) {
-                pluginsElement = buildElement.addElement("plugins");
-            }
-            
-            // Check if Jib plugin already exists
-            if (document.selectSingleNode("//plugin[artifactId='jib-maven-plugin']") == null) {
-                // Add Jib plugin
-                Element pluginElement = pluginsElement.addElement("plugin");
-                pluginElement.addElement("groupId").setText("com.google.cloud.tools");
-                pluginElement.addElement("artifactId").setText("jib-maven-plugin");
-                pluginElement.addElement("version").setText("3.4.0");
-                
-                Element configElement = pluginElement.addElement("configuration");
-                Element fromElement = configElement.addElement("from");
-                fromElement.addElement("image").setText("openjdk:17-jre-slim");
-                
-                Element toElement = configElement.addElement("to");
-                toElement.addElement("image").setText("${project.artifactId}:${project.version}");
-            }
-            
-            // Write updated XML
-            OutputFormat format = OutputFormat.createPrettyPrint();
-            XMLWriter writer = new XMLWriter(new FileWriter(pomFile), format);
-            writer.write(document);
-            writer.close();
-            
-            logger.debug("Updated pom.xml with Jib plugin");
-            
-        } catch (Exception e) {
-            logger.error("Failed to update pom.xml with Jib plugin: {}", e.getMessage());
-            // Don't throw exception as this is not critical for the migration
-        }
-    }
-    
-    /**
      * Gets the framework-specific template path.
      */
     private String getFrameworkTemplatePath(FrameworkType framework, String templateName) {
@@ -414,155 +487,11 @@ public class TransformationService {
     }
     
     /**
-     * Applies React-specific transformations.
+     * Helper method to extract text content from XML using XPath.
      */
-    private void applyReactTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying React transformation to: {}", repoPath.getName());
-        
-        Map<String, Object> projectMetadata = extractReactMetadata(repoPath);
-        
-        // Create Dockerfile
-        createDockerfile(repoPath, projectMetadata, FrameworkType.REACT);
-        
-        // Create Helm chart structure
-        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.REACT);
-        
-        // Create nginx configuration
-        createNginxConfig(repoPath);
-        
-        logger.info("Successfully applied React transformation");
-    }
-    
-    /**
-     * Applies Angular-specific transformations.
-     */
-    private void applyAngularTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying Angular transformation to: {}", repoPath.getName());
-        
-        Map<String, Object> projectMetadata = extractAngularMetadata(repoPath);
-        
-        // Create Dockerfile
-        createDockerfile(repoPath, projectMetadata, FrameworkType.ANGULAR);
-        
-        // Create Helm chart structure
-        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.ANGULAR);
-        
-        // Create nginx configuration
-        createNginxConfig(repoPath);
-        
-        logger.info("Successfully applied Angular transformation");
-    }
-    
-    /**
-     * Applies Node.js-specific transformations.
-     */
-    private void applyNodeJsTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying Node.js transformation to: {}", repoPath.getName());
-        
-        Map<String, Object> projectMetadata = extractNodeJsMetadata(repoPath);
-        
-        // Create Dockerfile
-        createDockerfile(repoPath, projectMetadata, FrameworkType.NODE_JS);
-        
-        // Create Helm chart structure
-        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.NODE_JS);
-        
-        logger.info("Successfully applied Node.js transformation");
-    }
-    
-    /**
-     * Applies generic transformations.
-     */
-    private void applyGenericTransformation(File repoPath) throws IOException, TemplateException {
-        logger.info("Applying generic transformation to: {}", repoPath.getName());
-        
-        Map<String, Object> projectMetadata = extractGenericMetadata(repoPath);
-        
-        // Create Dockerfile
-        createDockerfile(repoPath, projectMetadata, FrameworkType.UNKNOWN);
-        
-        // Create Helm chart structure
-        createHelmChartStructure(repoPath, projectMetadata, FrameworkType.UNKNOWN);
-        
-        logger.info("Successfully applied generic transformation");
-    }
-    
-    /**
-     * Extracts metadata from React project's package.json.
-     */
-    private Map<String, Object> extractReactMetadata(File repoPath) {
-        return extractNodeBasedMetadata(repoPath, "React Application");
-    }
-    
-    /**
-     * Extracts metadata from Angular project's package.json.
-     */
-    private Map<String, Object> extractAngularMetadata(File repoPath) {
-        return extractNodeBasedMetadata(repoPath, "Angular Application");
-    }
-    
-    /**
-     * Extracts metadata from Node.js project's package.json.
-     */
-    private Map<String, Object> extractNodeJsMetadata(File repoPath) {
-        return extractNodeBasedMetadata(repoPath, "Node.js Application");
-    }
-    
-    /**
-     * Extracts metadata from Node-based projects (React, Angular, Node.js).
-     */
-    private Map<String, Object> extractNodeBasedMetadata(File repoPath, String defaultDescription) {
-        Map<String, Object> metadata = new HashMap<>();
-        
-        File packageJsonFile = new File(repoPath, "package.json");
-        if (!packageJsonFile.exists()) {
-            logger.warn("package.json not found, using default values");
-            metadata.put("artifactId", repoPath.getName());
-            metadata.put("name", repoPath.getName());
-            metadata.put("version", "1.0.0");
-            metadata.put("description", defaultDescription);
-            metadata.put("serverPort", "3000");
-            return metadata;
-        }
-        
-        try {
-            String packageContent = FileUtils.readFileToString(packageJsonFile, StandardCharsets.UTF_8);
-            // Simple JSON parsing - in production, use a proper JSON library
-            String name = extractJsonValue(packageContent, "name");
-            String version = extractJsonValue(packageContent, "version");
-            String description = extractJsonValue(packageContent, "description");
-            
-            metadata.put("artifactId", name != null ? name.replaceAll("[@/]", "") : repoPath.getName());
-            metadata.put("name", name != null ? name : repoPath.getName());
-            metadata.put("version", version != null ? version : "1.0.0");
-            metadata.put("description", description != null ? description : defaultDescription);
-            metadata.put("serverPort", "3000");
-            
-            logger.debug("Extracted Node.js metadata: {}", metadata);
-            
-        } catch (IOException e) {
-            logger.error("Failed to extract metadata from package.json", e);
-            metadata.put("artifactId", repoPath.getName());
-            metadata.put("name", repoPath.getName());
-            metadata.put("version", "1.0.0");
-            metadata.put("description", defaultDescription);
-            metadata.put("serverPort", "3000");
-        }
-        
-        return metadata;
-    }
-    
-    /**
-     * Extracts metadata for generic projects.
-     */
-    private Map<String, Object> extractGenericMetadata(File repoPath) {
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("artifactId", repoPath.getName());
-        metadata.put("name", repoPath.getName());
-        metadata.put("version", "1.0.0");
-        metadata.put("description", "Generic Application");
-        metadata.put("serverPort", "8080");
-        return metadata;
+    private String getTextContent(Document document, String xpath) {
+        Node node = document.selectSingleNode(xpath);
+        return node != null ? node.getText() : null;
     }
     
     /**
@@ -570,46 +499,27 @@ public class TransformationService {
      */
     private String extractJsonValue(String json, String key) {
         String pattern = "\"" + key + "\"\\s*:\\s*\"([^\"]+)\"";
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
-        java.util.regex.Matcher m = p.matcher(json);
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(json);
         return m.find() ? m.group(1) : null;
     }
     
     /**
-     * Creates nginx configuration for frontend applications.
+     * Internal class to cache repository analysis results.
      */
-    private void createNginxConfig(File repoPath) throws IOException {
-        logger.debug("Creating nginx configuration for: {}", repoPath.getName());
+    private static class RepositoryAnalysis {
+        private final FrameworkType frameworkType;
+        private final Map<String, Object> metadata;
+        private final long timestamp;
         
-        String nginxConfig = "events {\n" +
-                "    worker_connections 1024;\n" +
-                "}\n\n" +
-                "http {\n" +
-                "    include /etc/nginx/mime.types;\n" +
-                "    default_type application/octet-stream;\n\n" +
-                "    sendfile on;\n" +
-                "    keepalive_timeout 65;\n\n" +
-                "    server {\n" +
-                "        listen 80;\n" +
-                "        server_name localhost;\n" +
-                "        root /usr/share/nginx/html;\n" +
-                "        index index.html;\n\n" +
-                "        # Handle client-side routing\n" +
-                "        location / {\n" +
-                "            try_files $uri $uri/ /index.html;\n" +
-                "        }\n\n" +
-                "        # Security headers\n" +
-                "        add_header X-Frame-Options DENY;\n" +
-                "        add_header X-Content-Type-Options nosniff;\n" +
-                "        add_header X-XSS-Protection \"1; mode=block\";\n" +
-                "    }\n" +
-                "}";
-        
-        File nginxFile = new File(repoPath, "nginx.conf");
-        try (FileWriter writer = new FileWriter(nginxFile)) {
-            writer.write(nginxConfig);
+        public RepositoryAnalysis(FrameworkType frameworkType, Map<String, Object> metadata) {
+            this.frameworkType = frameworkType;
+            this.metadata = metadata;
+            this.timestamp = System.currentTimeMillis();
         }
         
-        logger.debug("Created nginx configuration at: {}", nginxFile.getAbsolutePath());
+        public FrameworkType getFrameworkType() { return frameworkType; }
+        public Map<String, Object> getMetadata() { return metadata; }
+        public long getTimestamp() { return timestamp; }
     }
 }
