@@ -130,44 +130,27 @@ public class TransformationService {
     }
     
     /**
-     * Detects the framework type of a repository.
+     * Detects the framework type of a repository using the comprehensive detection service.
      */
     private FrameworkType detectFrameworkType(File repoDir) {
-        // Check for Spring Boot
-        if (new File(repoDir, "pom.xml").exists()) {
-            try {
-                String pomContent = FileUtils.readFileToString(new File(repoDir, "pom.xml"), StandardCharsets.UTF_8);
-                if (pomContent.contains("spring-boot")) {
-                    return FrameworkType.SPRING_BOOT;
-                }
-                return FrameworkType.MAVEN_JAVA;
-            } catch (IOException e) {
-                logger.debug("Failed to read pom.xml: {}", e.getMessage());
+        FrameworkDetectionService detectionService = new FrameworkDetectionService();
+        FrameworkDetectionService.DetectionResult result = detectionService.detectFramework(repoDir);
+        
+        // Log detailed detection results
+        if (result.isMonorepo()) {
+            logger.info("Detected monorepo with {} components:", result.getComponents().size());
+            for (FrameworkDetectionService.ComponentResult component : result.getComponents()) {
+                logger.info("  - {}", component);
+            }
+        } else {
+            logger.info("Detected single framework: {}", result.getPrimaryFramework().getDisplayName());
+            if (!result.getComponents().isEmpty()) {
+                FrameworkDetectionService.ComponentResult component = result.getComponents().get(0);
+                logger.debug("Evidence: {}", String.join(", ", component.getEvidence()));
             }
         }
         
-        // Check for Node.js projects
-        if (new File(repoDir, "package.json").exists()) {
-            try {
-                String packageContent = FileUtils.readFileToString(new File(repoDir, "package.json"), StandardCharsets.UTF_8);
-                if (packageContent.contains("\"react\"")) {
-                    return FrameworkType.REACT;
-                }
-                if (packageContent.contains("\"@angular/core\"")) {
-                    return FrameworkType.ANGULAR;
-                }
-                return FrameworkType.NODE_JS;
-            } catch (IOException e) {
-                logger.debug("Failed to read package.json: {}", e.getMessage());
-            }
-        }
-        
-        // Check for Gradle
-        if (new File(repoDir, "build.gradle").exists() || new File(repoDir, "build.gradle.kts").exists()) {
-            return FrameworkType.GRADLE_JAVA;
-        }
-        
-        return FrameworkType.UNKNOWN;
+        return result.getPrimaryFramework();
     }
     
     /**

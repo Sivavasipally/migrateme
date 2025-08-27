@@ -8,6 +8,9 @@
       "Bash(java:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "/usr/lib"
+    ]
   }
 }

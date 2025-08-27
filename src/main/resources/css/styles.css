@@ -963,12 +963,12 @@ or Reporting Component Styles */
 .error-category {
     -fx-font-size: 12px;
     -fx-text-fill: #7f8c8d;
-    -fx-font-weight: semi-bold;
+    -fx-font-weight: bold;
 }
 
 .error-severity {
     -fx-font-size: 12px;
-    -fx-font-weight: semi-bold;
+    -fx-font-weight: bold;
 }
 
 .severity-low {
@@ -1138,4 +1138,544 @@ or Reporting Component Styles */
 
 .row-failed {
     -fx-background-color: #ffe6e6;
+}
+
+/* Git Provider Connection Panel Styles */
+.git-provider-connection-panel {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 1);
+}
+
+.git-provider-connection-panel .field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+    -fx-font-size: 13px;
+}
+
+.git-provider-connection-panel .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 12px;
+    -fx-pref-width: 200px;
+}
+
+.git-provider-connection-panel .combo-box:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2px;
+}
+
+.git-provider-connection-panel .text-field,
+.git-provider-connection-panel .password-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 13px;
+}
+
+.git-provider-connection-panel .text-field:focused,
+.git-provider-connection-panel .password-field:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2px;
+}
+
+.git-provider-connection-panel .button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 13px;
+}
+
+.git-provider-connection-panel .button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.git-provider-connection-panel .button:pressed {
+    -fx-background-color: #004085;
+}
+
+.git-provider-connection-panel .button:disabled {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: #ffffff;
+    -fx-cursor: default;
+    -fx-opacity: 0.6;
+}
+
+/* Connection Status Styles */
+.connection-not-tested {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}
+
+.connection-testing {
+    -fx-text-fill: #007bff;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.connection-success {
+    -fx-text-fill: #28a745;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.connection-failed {
+    -fx-text-fill: #dc3545;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.git-provider-connection-panel .progress-indicator {
+    -fx-accent: #007bff;
+}
+
+/* Grid layout for credentials */
+.git-provider-connection-panel .grid-pane {
+    -fx-hgap: 10px;
+    -fx-vgap: 8px;
+}
+
+.git-provider-connection-panel .grid-pane .label {
+    -fx-text-fill: #495057;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* Repository Discovery Panel Styles */
+.repository-discovery-panel {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 3, 0, 0, 1);
+}
+
+.repository-discovery-panel .filter-section {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 10px;
+    -fx-border-radius: 6px 6px 0 0;
+    -fx-background-radius: 6px 6px 0 0;
+}
+
+.repository-discovery-panel .section-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+    -fx-font-size: 13px;
+}
+
+.repository-discovery-panel .text-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 10px;
+    -fx-font-size: 12px;
+}
+
+.repository-discovery-panel .text-field:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2px;
+}
+
+.repository-discovery-panel .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 10px;
+    -fx-font-size: 12px;
+}
+
+.repository-discovery-panel .combo-box:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2px;
+}
+
+.repository-discovery-panel .date-picker {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 12px;
+}
+
+.repository-discovery-panel .date-picker:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2px;
+}
+
+.repository-discovery-panel .button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6px 12px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 12px;
+}
+
+.repository-discovery-panel .button:hover {
+    -fx-background-color: #5a6268;
+}
+
+.repository-discovery-panel .button:pressed {
+    -fx-background-color: #545b62;
+}
+
+.repository-discovery-panel .button:disabled {
+    -fx-background-color: #adb5bd;
+    -fx-text-fill: #ffffff;
+    -fx-cursor: default;
+    -fx-opacity: 0.6;
+}
+
+.selection-summary {
+    -fx-text-fill: #495057;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.status-label {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}
+
+/* Repository Table Styles */
+.repository-table {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+.repository-table .column-header-background {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.repository-table .column-header {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #495057;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.repository-table .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #f8f9fa;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.repository-table .table-row-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.repository-table .table-row-cell.repository-row-selected {
+    -fx-background-color: #e7f3ff;
+    -fx-border-color: #007bff;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.repository-table .table-row-cell.repository-row-private {
+    -fx-background-color: #fff3cd;
+}
+
+.repository-table .table-row-cell.repository-row-fork {
+    -fx-background-color: #f0f8f0;
+}
+
+.repository-table .table-cell {
+    -fx-padding: 8px 6px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #495057;
+}
+
+.repository-name {
+    -fx-font-weight: bold;
+    -fx-text-fill: #007bff;
+    -fx-font-size: 13px;
+}
+
+.repository-description {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 11px;
+    -fx-wrap-text: true;
+}
+
+.language-label {
+    -fx-background-color: #e9ecef;
+    -fx-text-fill: #495057;
+    -fx-padding: 2px 6px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.visibility-private {
+    -fx-text-fill: #856404;
+    -fx-font-weight: bold;
+}
+
+.visibility-public {
+    -fx-text-fill: #155724;
+    -fx-font-weight: bold;
+}
+
+.visibility-fork {
+    -fx-text-fill: #0c5460;
+    -fx-font-style: italic;
+}
+/* E
+nhanced Add Repository Dialog Styles */
+.add-repository-dialog {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 4);
+}
+
+.add-repository-dialog .tab-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.add-repository-dialog .tab-pane .tab-header-area {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-radius: 8px 8px 0 0;
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.add-repository-dialog .tab-pane .tab-header-background {
+    -fx-background-color: #f8f9fa;
+    -fx-border-radius: 8px 8px 0 0;
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.add-repository-dialog .tab-pane .tab {
+    -fx-background-color: #f8f9fa;
+    -fx-text-base-color: #495057;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 12px 20px;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.add-repository-dialog .tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-text-base-color: #007bff;
+    -fx-border-color: #007bff;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.add-repository-dialog .tab-pane .tab:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.add-repository-dialog .tab-pane .tab-content-area {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.add-repository-dialog .section-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+    -fx-font-size: 14px;
+    -fx-padding: 0 0 8px 0;
+}
+
+/* Single Repository Tab Styles */
+.single-repository-panel {
+    -fx-background-color: white;
+    -fx-padding: 15px;
+}
+
+.single-repository-panel .combo-box,
+.single-repository-panel .text-field,
+.single-repository-panel .password-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 13px;
+}
+
+.single-repository-panel .combo-box:focused,
+.single-repository-panel .text-field:focused,
+.single-repository-panel .password-field:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2px;
+}
+
+.single-repository-panel .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.single-repository-panel .list-view .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #495057;
+    -fx-font-size: 12px;
+    -fx-padding: 8px 12px;
+    -fx-border-color: #f8f9fa;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.single-repository-panel .list-view .list-cell:selected {
+    -fx-background-color: #e7f3ff;
+    -fx-text-fill: #007bff;
+}
+
+.single-repository-panel .list-view .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Bulk Discovery Tab Styles */
+.bulk-discovery-panel {
+    -fx-background-color: white;
+    -fx-padding: 15px;
+}
+
+.bulk-discovery-panel .git-provider-connection-panel {
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 15px;
+}
+
+.bulk-discovery-panel .repository-discovery-panel {
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-background-color: white;
+}
+
+/* Shared Button Section Styles */
+.add-repository-dialog .button-section {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 15px;
+    -fx-spacing: 10px;
+    -fx-border-radius: 0 0 8px 8px;
+    -fx-background-radius: 0 0 8px 8px;
+}
+
+.add-repository-dialog .button-section .button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 13px;
+}
+
+.add-repository-dialog .button-section .button:hover {
+    -fx-background-color: #5a6268;
+}
+
+.add-repository-dialog .button-section .button:pressed {
+    -fx-background-color: #545b62;
+}
+
+.add-repository-dialog .button-section .button:disabled {
+    -fx-background-color: #adb5bd;
+    -fx-text-fill: #ffffff;
+    -fx-cursor: default;
+    -fx-opacity: 0.6;
+}
+
+/* Primary action buttons */
+.add-repository-dialog .button-section .button.primary {
+    -fx-background-color: #007bff;
+}
+
+.add-repository-dialog .button-section .button.primary:hover {
+    -fx-background-color: #0056b3;
+}
+
+.add-repository-dialog .button-section .button.primary:pressed {
+    -fx-background-color: #004085;
+}
+
+/* Success action buttons */
+.add-repository-dialog .button-section .button.success {
+    -fx-background-color: #28a745;
+}
+
+.add-repository-dialog .button-section .button.success:hover {
+    -fx-background-color: #218838;
+}
+
+.add-repository-dialog .button-section .button.success:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+/* Tab transition animations */
+.add-repository-dialog .tab-pane .tab-content-area .tab-pane {
+    -fx-transition: -fx-opacity 0.2s ease-in-out;
+}
+
+/* Loading states */
+.add-repository-dialog .progress-indicator {
+    -fx-accent: #007bff;
+    -fx-progress-color: #007bff;
+}
+
+/* Status messages */
+.add-repository-dialog .status-message {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 5px 0;
+}
+
+.add-repository-dialog .status-message.success {
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+    -fx-font-style: normal;
+}
+
+.add-repository-dialog .status-message.error {
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+    -fx-font-style: normal;
+}
+
+.add-repository-dialog .status-message.warning {
+    -fx-text-fill: #ffc107;
+    -fx-font-weight: bold;
+    -fx-font-style: normal;
 }

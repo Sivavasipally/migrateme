@@ -2,8 +2,10 @@ package com.example.gitmigrator.service;
 
 import com.example.gitmigrator.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,10 @@ public class GitHubServiceIntegration implements GitServiceIntegration {
     
     public GitHubServiceIntegration() {
         this.objectMapper = new ObjectMapper();
+        // Configure ObjectMapper to ignore unknown properties from GitHub API
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // Register JSR310 module for Java 8 time support
+        this.objectMapper.registerModule(new JavaTimeModule());
     }
     
     @Override
