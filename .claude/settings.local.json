@@ -5,7 +5,11 @@
       "Bash(mkdir:*)",
       "Bash(mv /mnt/d/genai/migrateme/src/main/resources/templates/*.ftl /mnt/d/genai/migrateme/src/main/resources/templates/springboot/)",
       "Bash(mvn:*)",
-      "Bash(java:*)"
+      "Bash(java:*)",
+      "Bash(export:*)",
+      "Bash(grep:*)",
+      "Bash(chmod:*)",
+      "Bash(./fix-test-errors.sh:*)"
     ],
     "deny": [],
     "ask": [],

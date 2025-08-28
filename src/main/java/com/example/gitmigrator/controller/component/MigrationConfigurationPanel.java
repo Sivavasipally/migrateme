@@ -173,9 +173,9 @@ public class MigrationConfigurationPanel extends VBox {
     }
     
     /**
-     * Create the components selection tab.
+     * Create the components selection tab with scrolling support.
      */
-    private VBox createComponentsTab() {
+    private ScrollPane createComponentsTab() {
         VBox componentsTab = new VBox(15);
         componentsTab.setPadding(new Insets(15));
         
@@ -250,13 +250,21 @@ public class MigrationConfigurationPanel extends VBox {
             baseImageLabel, baseImageGrid
         );
         
-        return componentsTab;
+        // Wrap in ScrollPane for proper scrolling
+        ScrollPane scrollPane = new ScrollPane(componentsTab);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(false);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.getStyleClass().add("config-scroll-pane");
+        
+        return scrollPane;
     }
     
     /**
-     * Create the templates management tab.
+     * Create the templates management tab with scrolling support.
      */
-    private VBox createTemplatesTab() {
+    private ScrollPane createTemplatesTab() {
         VBox templatesTab = new VBox(15);
         templatesTab.setPadding(new Insets(15));
         
@@ -284,19 +292,66 @@ public class MigrationConfigurationPanel extends VBox {
         deleteTemplateBtn.getStyleClass().add("config-button-danger");
         deleteTemplateBtn.setOnAction(e -> deleteSelectedTemplate());
         
+        // Add new template management buttons
+        Button newTemplateBtn = new Button("New");
+        newTemplateBtn.getStyleClass().add("config-button");
+        newTemplateBtn.setOnAction(e -> createNewTemplate());
+        
+        Button editTemplateBtn = new Button("Edit");
+        editTemplateBtn.getStyleClass().add("config-button");
+        editTemplateBtn.setOnAction(e -> editSelectedTemplate());
+        
+        Button copyTemplateBtn = new Button("Copy");
+        copyTemplateBtn.getStyleClass().add("config-button");
+        copyTemplateBtn.setOnAction(e -> copySelectedTemplate());
+        
+        Button exportTemplateBtn = new Button("Export");
+        exportTemplateBtn.getStyleClass().add("config-button");
+        exportTemplateBtn.setOnAction(e -> exportSelectedTemplate());
+        
         templateControls.getChildren().addAll(
-            templateSelector, loadTemplateBtn, saveTemplateBtn, deleteTemplateBtn
+            templateSelector, loadTemplateBtn, newTemplateBtn, editTemplateBtn, 
+            copyTemplateBtn, saveTemplateBtn, exportTemplateBtn, deleteTemplateBtn
         );
         
-        // Template preview
-        Label previewLabel = new Label("Template Preview:");
-        previewLabel.getStyleClass().add("config-label");
+        // Template file type selector
+        Label fileTypeLabel = new Label("Template File Type:");
+        fileTypeLabel.getStyleClass().add("config-label");
+        
+        ComboBox<String> templateFileTypeCombo = new ComboBox<>();
+        templateFileTypeCombo.getItems().addAll(
+            "Dockerfile.ftl", "Chart.yaml.ftl", "values.yaml.ftl", 
+            "deployment.yaml.ftl", "service.yaml.ftl", "ingress.yaml.ftl",
+            "configmap.yaml.ftl", "secret.yaml.ftl", "custom.ftl"
+        );
+        templateFileTypeCombo.setValue("Dockerfile.ftl");
+        templateFileTypeCombo.getStyleClass().add("config-combo");
+        templateFileTypeCombo.setPrefWidth(150);
+        
+        HBox fileTypeControls = new HBox(10);
+        fileTypeControls.setAlignment(Pos.CENTER_LEFT);
+        fileTypeControls.getChildren().addAll(fileTypeLabel, templateFileTypeCombo);
+        
+        // Template editor with syntax highlighting
+        Label editorLabel = new Label("FreeMarker Template Editor:");
+        editorLabel.getStyleClass().add("config-label");
         
         templatePreview = new TextArea();
-        templatePreview.setEditable(false);
-        templatePreview.setPrefRowCount(10);
-        templatePreview.getStyleClass().add("template-preview");
-        templatePreview.setPromptText("Select a template to see its configuration...");
+        templatePreview.setEditable(true);
+        templatePreview.setPrefRowCount(15);
+        templatePreview.setWrapText(false);
+        templatePreview.getStyleClass().addAll("template-preview", "ftl-editor");
+        templatePreview.setPromptText("Select a template to edit or create a new one...\n\n" +
+            "FreeMarker Syntax Examples:\n" +
+            "${variable} - Variable substitution\n" +
+            "<#if condition>...</#if> - Conditional\n" +
+            "<#list items as item>...</#list> - Loop\n" +
+            "<#-- Comment --> - Comments");
+        
+        // Add template file type change listener
+        templateFileTypeCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            updateTemplateEditorForFileType(newVal);
+        });
         
         // Update preview when template selection changes
         templateSelector.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -323,21 +378,49 @@ public class MigrationConfigurationPanel extends VBox {
         
         builtInTemplates.getChildren().addAll(microserviceBtn, monolithBtn, frontendBtn);
         
+        // Template validation and help section
+        Label validationLabel = new Label("Template Validation:");
+        validationLabel.getStyleClass().add("config-label");
+        
+        Button validateTemplateBtn = new Button("Validate FTL Syntax");
+        validateTemplateBtn.getStyleClass().add("config-button");
+        validateTemplateBtn.setOnAction(e -> validateCurrentTemplate());
+        
+        Button previewOutputBtn = new Button("Preview Output");
+        previewOutputBtn.getStyleClass().add("config-button");
+        previewOutputBtn.setOnAction(e -> previewTemplateOutput());
+        
+        HBox validationControls = new HBox(10);
+        validationControls.setAlignment(Pos.CENTER_LEFT);
+        validationControls.getChildren().addAll(validateTemplateBtn, previewOutputBtn);
+        
         templatesTab.getChildren().addAll(
             templateLabel, templateControls,
             new Separator(),
-            previewLabel, templatePreview,
+            fileTypeControls,
+            new Separator(),
+            editorLabel, templatePreview,
+            new Separator(),
+            validationLabel, validationControls,
             new Separator(),
             builtInLabel, builtInTemplates
         );
         
-        return templatesTab;
+        // Wrap in ScrollPane for proper scrolling
+        ScrollPane scrollPane = new ScrollPane(templatesTab);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(false);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.getStyleClass().add("config-scroll-pane");
+        
+        return scrollPane;
     }
     
     /**
-     * Create the advanced settings tab.
+     * Create the advanced settings tab with scrolling support.
      */
-    private VBox createAdvancedTab() {
+    private ScrollPane createAdvancedTab() {
         VBox advancedTab = new VBox(15);
         advancedTab.setPadding(new Insets(15));
         
@@ -411,7 +494,15 @@ public class MigrationConfigurationPanel extends VBox {
             envLabel, envTextArea
         );
         
-        return advancedTab;
+        // Wrap in ScrollPane for proper scrolling
+        ScrollPane scrollPane = new ScrollPane(advancedTab);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(false);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.getStyleClass().add("config-scroll-pane");
+        
+        return scrollPane;
     }
     
     /**
@@ -757,6 +848,243 @@ public class MigrationConfigurationPanel extends VBox {
         this.onValidationError = callback;
     }
     
+    // === Enhanced Template Management Methods ===
+    
+    /**
+     * Create a new template from scratch.
+     */
+    private void createNewTemplate() {
+        templatePreview.clear();
+        templatePreview.setPromptText("Enter your new FreeMarker template content here...\n\n" +
+            "Example Dockerfile template:\n" +
+            "FROM ${baseImage!'openjdk:17-jre-slim'}\n" +
+            "WORKDIR /app\n" +
+            "COPY target/${artifactId}-${version}.jar app.jar\n" +
+            "EXPOSE ${serverPort!8080}\n" +
+            "CMD [\"java\", \"-jar\", \"app.jar\"]\n\n" +
+            "Available variables: ${artifactId}, ${version}, ${baseImage}, ${serverPort}");
+        templatePreview.requestFocus();
+        showValidationMessage("New template created. Enter content and save when ready.", false);
+    }
+    
+    /**
+     * Edit the currently selected template.
+     */
+    private void editSelectedTemplate() {
+        String selectedTemplate = templateSelector.getValue();
+        if (selectedTemplate == null || selectedTemplate.isEmpty()) {
+            showValidationError("Please select a template to edit");
+            return;
+        }
+        
+        templatePreview.setEditable(true);
+        templatePreview.requestFocus();
+        showValidationMessage("Template editing enabled. Make changes and save when done.", false);
+    }
+    
+    /**
+     * Copy the selected template to create a new one.
+     */
+    private void copySelectedTemplate() {
+        String selectedTemplate = templateSelector.getValue();
+        if (selectedTemplate == null || selectedTemplate.isEmpty()) {
+            showValidationError("Please select a template to copy");
+            return;
+        }
+        
+        // Create a copy with modified name
+        String currentContent = templatePreview.getText();
+        templatePreview.setText(currentContent);
+        templateSelector.getSelectionModel().clearSelection();
+        showValidationMessage("Template copied. Modify as needed and save with a new name.", false);
+    }
+    
+    /**
+     * Export the selected template to a file.
+     */
+    private void exportSelectedTemplate() {
+        String selectedTemplate = templateSelector.getValue();
+        if (selectedTemplate == null || selectedTemplate.isEmpty()) {
+            showValidationError("Please select a template to export");
+            return;
+        }
+        
+        try {
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Export Template");
+            fileChooser.getExtensionFilters().add(
+                new javafx.stage.FileChooser.ExtensionFilter("FreeMarker Templates", "*.ftl")
+            );
+            fileChooser.setInitialFileName(selectedTemplate + ".ftl");
+            
+            java.io.File file = fileChooser.showSaveDialog(templatePreview.getScene().getWindow());
+            if (file != null) {
+                java.nio.file.Files.write(file.toPath(), templatePreview.getText().getBytes());
+                showValidationMessage("Template exported to: " + file.getAbsolutePath(), false);
+            }
+        } catch (Exception e) {
+            showValidationError("Failed to export template: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Update template editor content based on file type selection.
+     */
+    private void updateTemplateEditorForFileType(String fileType) {
+        if (fileType == null) return;
+        
+        String templateContent = getTemplateExample(fileType);
+        if (templatePreview.getText().isEmpty() || templatePreview.getText().equals(templatePreview.getPromptText())) {
+            templatePreview.setText(templateContent);
+        }
+        
+        // Update prompt text with file-type specific help
+        templatePreview.setPromptText("Enter " + fileType + " template content...\n\n" + templateContent);
+    }
+    
+    /**
+     * Get example template content for different file types.
+     */
+    private String getTemplateExample(String fileType) {
+        switch (fileType) {
+            case "Dockerfile.ftl":
+                return "FROM ${baseImage!'openjdk:17-jre-slim'}\n" +
+                       "WORKDIR /app\n" +
+                       "COPY target/${artifactId}-${version}.jar app.jar\n" +
+                       "EXPOSE ${serverPort!8080}\n" +
+                       "CMD [\"java\", \"-jar\", \"app.jar\"]";
+                       
+            case "Chart.yaml.ftl":
+                return "apiVersion: v2\n" +
+                       "name: ${artifactId}\n" +
+                       "description: A Helm chart for ${name}\n" +
+                       "type: application\n" +
+                       "version: 0.1.0\n" +
+                       "appVersion: \"${version}\"";
+                       
+            case "deployment.yaml.ftl":
+                return "apiVersion: apps/v1\n" +
+                       "kind: Deployment\n" +
+                       "metadata:\n" +
+                       "  name: ${artifactId}\n" +
+                       "spec:\n" +
+                       "  replicas: ${replicas!3}\n" +
+                       "  selector:\n" +
+                       "    matchLabels:\n" +
+                       "      app: ${artifactId}\n" +
+                       "  template:\n" +
+                       "    metadata:\n" +
+                       "      labels:\n" +
+                       "        app: ${artifactId}\n" +
+                       "    spec:\n" +
+                       "      containers:\n" +
+                       "      - name: ${artifactId}\n" +
+                       "        image: ${artifactId}:${version}\n" +
+                       "        ports:\n" +
+                       "        - containerPort: ${serverPort!8080}";
+                       
+            case "service.yaml.ftl":
+                return "apiVersion: v1\n" +
+                       "kind: Service\n" +
+                       "metadata:\n" +
+                       "  name: ${artifactId}-service\n" +
+                       "spec:\n" +
+                       "  selector:\n" +
+                       "    app: ${artifactId}\n" +
+                       "  ports:\n" +
+                       "  - port: ${servicePort!80}\n" +
+                       "    targetPort: ${serverPort!8080}\n" +
+                       "  type: ClusterIP";
+                       
+            default:
+                return "# Enter your " + fileType + " template content here\n" +
+                       "# Use ${variableName} for variable substitution\n" +
+                       "# Use <#if condition>...</#if> for conditionals\n" +
+                       "# Use <#list items as item>...</#list> for loops";
+        }
+    }
+    
+    /**
+     * Validate the current template syntax.
+     */
+    private void validateCurrentTemplate() {
+        String templateContent = templatePreview.getText();
+        if (templateContent.isEmpty()) {
+            showValidationError("Template is empty");
+            return;
+        }
+        
+        try {
+            // Basic FreeMarker syntax validation
+            freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_32);
+            cfg.setTemplateLoader(new freemarker.cache.StringTemplateLoader());
+            
+            freemarker.template.Template template = new freemarker.template.Template("validation", templateContent, cfg);
+            showValidationMessage("Template syntax is valid!", false);
+            
+        } catch (Exception e) {
+            showValidationError("Template syntax error: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Preview the template output with sample data.
+     */
+    private void previewTemplateOutput() {
+        String templateContent = templatePreview.getText();
+        if (templateContent.isEmpty()) {
+            showValidationError("Template is empty");
+            return;
+        }
+        
+        try {
+            // Create sample data for preview
+            java.util.Map<String, Object> sampleData = new java.util.HashMap<>();
+            sampleData.put("artifactId", "sample-app");
+            sampleData.put("version", "1.0.0");
+            sampleData.put("name", "Sample Application");
+            sampleData.put("baseImage", "openjdk:17-jre-slim");
+            sampleData.put("serverPort", "8080");
+            sampleData.put("replicas", "3");
+            sampleData.put("servicePort", "80");
+            
+            // Process template with sample data
+            freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_32);
+            cfg.setTemplateLoader(new freemarker.cache.StringTemplateLoader());
+            freemarker.template.Template template = new freemarker.template.Template("preview", templateContent, cfg);
+            
+            java.io.StringWriter writer = new java.io.StringWriter();
+            template.process(sampleData, writer);
+            String output = writer.toString();
+            
+            // Show preview in a dialog
+            showTemplatePreviewDialog(output);
+            
+        } catch (Exception e) {
+            showValidationError("Template processing error: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Show template preview output in a dialog.
+     */
+    private void showTemplatePreviewDialog(String output) {
+        javafx.scene.control.Dialog<Void> dialog = new javafx.scene.control.Dialog<>();
+        dialog.setTitle("Template Output Preview");
+        dialog.setHeaderText("Generated output with sample data:");
+        
+        javafx.scene.control.TextArea outputArea = new javafx.scene.control.TextArea(output);
+        outputArea.setEditable(false);
+        outputArea.setPrefRowCount(20);
+        outputArea.setPrefColumnCount(80);
+        outputArea.setWrapText(false);
+        outputArea.getStyleClass().add("template-preview");
+        
+        dialog.getDialogPane().setContent(outputArea);
+        dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.CLOSE);
+        dialog.showAndWait();
+    }
+
     /**
      * Custom setting data model for the advanced settings table.
      */

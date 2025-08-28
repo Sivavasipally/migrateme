@@ -91,11 +91,12 @@ class ErrorRecoveryHelperImplTest {
     }
 
     private ErrorReport createErrorReport(String message, ErrorCategory category) {
-        ErrorReport report = new ErrorReport();
-        report.setMessage(message);
-        report.setCategory(category);
-        report.setSeverity(ErrorSeverity.ERROR);
-        report.setTimestamp(LocalDateTime.now());
-        return report;
+        return ErrorReport.builder()
+            .title(message)
+            .description(message)
+            .category(category)
+            .severity(ErrorSeverity.ERROR)
+            .timestamp(LocalDateTime.now())
+            .build();
     }
 }

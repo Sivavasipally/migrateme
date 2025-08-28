@@ -92,7 +92,7 @@ class MigrationConfigurationTest {
     }
 
     @Test
-    void shouldManageCustomSettings() {
+    void shouldManageIndividualCustomSettings() {
         // Given
         MigrationConfiguration config = new MigrationConfiguration();
 

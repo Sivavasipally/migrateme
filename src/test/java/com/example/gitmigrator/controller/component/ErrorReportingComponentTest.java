@@ -73,8 +73,14 @@ class ErrorReportingComponentTest {
     @Test
     void shouldShowErrorDetails(FxRobot robot) {
         // Given
-        ErrorReport error = createErrorReport("Detailed error", ErrorSeverity.ERROR, ErrorCategory.GIT_OPERATION);
-        error.setDetails("This is a detailed error message with stack trace");
+        ErrorReport error = ErrorReport.builder()
+            .title("Detailed error")
+            .description("This is a detailed error message with stack trace")
+            .severity(ErrorSeverity.ERROR)
+            .category(ErrorCategory.GIT_OPERATION)
+            .technicalDetails("This is a detailed error message with stack trace")
+            .timestamp(LocalDateTime.now())
+            .build();
 
         Platform.runLater(() -> errorReportingComponent.displayErrors(Arrays.asList(error)));
         robot.sleep(100);
@@ -87,11 +93,12 @@ class ErrorReportingComponentTest {
     }
 
     private ErrorReport createErrorReport(String message, ErrorSeverity severity, ErrorCategory category) {
-        ErrorReport report = new ErrorReport();
-        report.setMessage(message);
-        report.setSeverity(severity);
-        report.setCategory(category);
-        report.setTimestamp(LocalDateTime.now());
-        return report;
+        return ErrorReport.builder()
+            .title(message)
+            .description(message)
+            .severity(severity)
+            .category(category)
+            .timestamp(LocalDateTime.now())
+            .build();
     }
 }

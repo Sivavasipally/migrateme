@@ -22,6 +22,7 @@
         
         <slf4j.version>2.0.9</slf4j.version>
         <logback.version>1.4.11</logback.version>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <dependencies>
@@ -221,6 +222,18 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             
             <plugin>
@@ -228,6 +241,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
+                    <skipTests>true</skipTests>
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>

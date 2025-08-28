@@ -59,12 +59,13 @@ public class GitMigratorApplication extends Application {
             Scene scene = new Scene(loader.load());
             scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
             
-            // Configure stage for enhanced UI
-            primaryStage.setTitle("Enhanced Git Repository Migrator");
+            // Configure stage for enhanced UI with better visibility
+            primaryStage.setTitle("🚀 Enhanced Git Repository Migrator - Containerization & DevOps Automation");
             primaryStage.setScene(scene);
-            primaryStage.setMinWidth(1200);
-            primaryStage.setMinHeight(800);
-            primaryStage.setMaximized(false);
+            primaryStage.setMinWidth(1400);
+            primaryStage.setMinHeight(1000);
+            primaryStage.setMaximized(true);
+            primaryStage.centerOnScreen();
             
             // Show the application
             primaryStage.show();

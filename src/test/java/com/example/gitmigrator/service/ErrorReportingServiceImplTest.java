@@ -45,10 +45,10 @@ class ErrorReportingServiceImplTest {
         assertThat(errors).hasSize(1);
         
         ErrorReport error = errors.get(0);
-        assertThat(error.getMessage()).isEqualTo(message);
+        assertThat(error.getTitle()).isEqualTo(message);
         assertThat(error.getCategory()).isEqualTo(category);
         assertThat(error.getSeverity()).isEqualTo(ErrorSeverity.ERROR);
-        assertThat(error.getDetails()).contains("Root cause");
+        assertThat(error.getTechnicalDetails()).contains("Root cause");
     }
 
     @Test
@@ -65,7 +65,7 @@ class ErrorReportingServiceImplTest {
         assertThat(errors).hasSize(1);
         
         ErrorReport error = errors.get(0);
-        assertThat(error.getMessage()).isEqualTo(message);
+        assertThat(error.getTitle()).isEqualTo(message);
         assertThat(error.getCategory()).isEqualTo(category);
         assertThat(error.getSeverity()).isEqualTo(ErrorSeverity.WARNING);
     }
@@ -83,10 +83,10 @@ class ErrorReportingServiceImplTest {
 
         // Then
         assertThat(gitErrors).hasSize(1);
-        assertThat(gitErrors.get(0).getMessage()).isEqualTo("Git error");
+        assertThat(gitErrors.get(0).getTitle()).isEqualTo("Git error");
         
         assertThat(templateErrors).hasSize(1);
-        assertThat(templateErrors.get(0).getMessage()).isEqualTo("Template error");
+        assertThat(templateErrors.get(0).getTitle()).isEqualTo("Template error");
     }
 
     @Test
@@ -101,10 +101,10 @@ class ErrorReportingServiceImplTest {
 
         // Then
         assertThat(errors).hasSize(1);
-        assertThat(errors.get(0).getMessage()).isEqualTo("Error message");
+        assertThat(errors.get(0).getTitle()).isEqualTo("Error message");
         
         assertThat(warnings).hasSize(1);
-        assertThat(warnings.get(0).getMessage()).isEqualTo("Warning message");
+        assertThat(warnings.get(0).getTitle()).isEqualTo("Warning message");
     }
 
     @Test
@@ -132,7 +132,7 @@ class ErrorReportingServiceImplTest {
 
         // Then
         ErrorReport notifiedError = notificationFuture.get(1, TimeUnit.SECONDS);
-        assertThat(notifiedError.getMessage()).isEqualTo("Test error");
+        assertThat(notifiedError.getTitle()).isEqualTo("Test error");
         assertThat(notifiedError.getCategory()).isEqualTo(ErrorCategory.GIT_OPERATION);
     }
 

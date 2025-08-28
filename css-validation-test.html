@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Validation Test for JavaFX</title>
+    <style>
+        /* Test if our color formats are valid hex codes */
+        .test1 { color: #00000033; }
+        .test2 { color: #0000004d; }
+        .test3 { color: #00000066; }
+        .test4 { color: #0000001a; }
+        .test5 { color: #007bff4d; }
+        .test6 { color: #007bff80; }
+        .test7 { color: #00000026; }
+        .test8 { color: #0000000d; }
+    </style>
+</head>
+<body>
+    <h1>JavaFX CSS Color Format Validation</h1>
+    <p>All color formats have been converted from RGBA to 8-digit hex (RRGGBBAA format)</p>
+    <p>This ensures JavaFX CSS parser compatibility.</p>
+    
+    <div class="test1">Test 1: #00000033 (black with 20% opacity)</div>
+    <div class="test2">Test 2: #0000004d (black with 30% opacity)</div>
+    <div class="test3">Test 3: #00000066 (black with 40% opacity)</div>
+    <div class="test4">Test 4: #0000001a (black with 10% opacity)</div>
+    <div class="test5">Test 5: #007bff4d (blue with 30% opacity)</div>
+    <div class="test6">Test 6: #007bff80 (blue with 50% opacity)</div>
+</body>
+</html>

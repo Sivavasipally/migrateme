@@ -91,9 +91,10 @@ public class EnhancedMainController implements Initializable {
      * Create the main layout with enhanced components.
      */
     private void createMainLayout() {
-        mainContainer = new VBox(15);
-        mainContainer.setPadding(new Insets(15));
+        mainContainer = new VBox(20);
+        mainContainer.setPadding(new Insets(20));
         mainContainer.getStyleClass().add("main-container");
+        mainContainer.setFillWidth(true);
         
         // Title section
         HBox titleSection = createTitleSection();
@@ -138,10 +139,11 @@ public class EnhancedMainController implements Initializable {
     private HBox createTitleSection() {
         HBox titleSection = new HBox();
         titleSection.setAlignment(Pos.CENTER);
-        titleSection.setPadding(new Insets(10));
+        titleSection.setPadding(new Insets(15, 10, 20, 10));
+        titleSection.setStyle("-fx-background-color: #ffffff; -fx-border-radius: 12px; -fx-background-radius: 12px;");
         
-        Text title = new Text("Enhanced Git Repository Migrator");
-        title.setFont(Font.font("System", FontWeight.BOLD, 24));
+        Text title = new Text("🚀 Enhanced Git Repository Migrator");
+        title.setFont(Font.font("System", FontWeight.BOLD, 28));
         title.getStyleClass().add("main-title");
         
         titleSection.getChildren().add(title);
@@ -152,17 +154,21 @@ public class EnhancedMainController implements Initializable {
      * Create the repository management section.
      */
     private VBox createRepositorySection() {
-        VBox repositorySection = new VBox(10);
+        VBox repositorySection = new VBox(15);
+        repositorySection.setPadding(new Insets(15));
+        repositorySection.setStyle("-fx-background-color: #ffffff; -fx-border-radius: 12px; -fx-background-radius: 12px; " +
+                                   "-fx-border-color: #dee2e6; -fx-border-width: 2px;");
         
         // Section title
-        Text sectionTitle = new Text("Repository Selection");
-        sectionTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
+        Text sectionTitle = new Text("📋 Repository Selection & Management");
+        sectionTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
         sectionTitle.getStyleClass().add("section-title");
         
         // Repository table with drag-and-drop
         repositoryTable = new DragDropRepositoryTable();
         repositoryTable.setItems(repositories);
-        repositoryTable.setPrefHeight(300);
+        repositoryTable.setPrefHeight(350);
+        repositoryTable.setMinHeight(350);
         
         // Repository controls
         HBox repoControls = createRepositoryControls();
@@ -175,31 +181,39 @@ public class EnhancedMainController implements Initializable {
      * Create repository control buttons.
      */
     private HBox createRepositoryControls() {
-        HBox controls = new HBox(10);
+        HBox controls = new HBox(12);
         controls.setAlignment(Pos.CENTER_LEFT);
+        controls.setPadding(new Insets(10, 0, 5, 0));
         
-        Button addRepoBtn = new Button("Add Repository");
+        Button addRepoBtn = new Button("➕ Add Repository");
         addRepoBtn.getStyleClass().add("primary-button");
         addRepoBtn.setOnAction(e -> showAddRepositoryDialog());
         
-        Button removeRepoBtn = new Button("Remove Selected");
+        Button removeRepoBtn = new Button("🗑️ Remove Selected");
         removeRepoBtn.getStyleClass().add("button");
         removeRepoBtn.setOnAction(e -> removeSelectedRepositories());
         
-        Button selectAllBtn = new Button("Select All");
+        Button selectAllBtn = new Button("☑️ Select All");
         selectAllBtn.getStyleClass().add("button");
         selectAllBtn.setOnAction(e -> selectAllRepositories(true));
         
-        Button selectNoneBtn = new Button("Select None");
+        Button selectNoneBtn = new Button("🔘 Select None");
         selectNoneBtn.getStyleClass().add("button");
         selectNoneBtn.setOnAction(e -> selectAllRepositories(false));
         
-        Button refreshBtn = new Button("Refresh Metadata");
+        Button refreshBtn = new Button("🔄 Refresh Metadata");
         refreshBtn.getStyleClass().add("button");
         refreshBtn.setOnAction(e -> refreshRepositoryMetadata());
         
-        controls.getChildren().addAll(addRepoBtn, removeRepoBtn, new Separator(), 
-                                     selectAllBtn, selectNoneBtn, new Separator(), refreshBtn);
+        // Add vertical separators between button groups
+        Separator sep1 = new Separator();
+        sep1.setOrientation(javafx.geometry.Orientation.VERTICAL);
+        
+        Separator sep2 = new Separator();
+        sep2.setOrientation(javafx.geometry.Orientation.VERTICAL);
+        
+        controls.getChildren().addAll(addRepoBtn, removeRepoBtn, sep1, 
+                                     selectAllBtn, selectNoneBtn, sep2, refreshBtn);
         return controls;
     }
     
@@ -207,16 +221,20 @@ public class EnhancedMainController implements Initializable {
      * Create the configuration section.
      */
     private VBox createConfigurationSection() {
-        VBox configSection = new VBox(10);
+        VBox configSection = new VBox(15);
+        configSection.setPadding(new Insets(15));
+        configSection.setStyle("-fx-background-color: #ffffff; -fx-border-radius: 12px; -fx-background-radius: 12px; " +
+                              "-fx-border-color: #dee2e6; -fx-border-width: 2px;");
         
         // Section title
-        Text sectionTitle = new Text("Migration Configuration");
-        sectionTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
+        Text sectionTitle = new Text("⚙️ Migration Configuration");
+        sectionTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
         sectionTitle.getStyleClass().add("section-title");
         
         // Configuration panel
         configPanel = new MigrationConfigurationPanel(templateService);
-        configPanel.setPrefHeight(400);
+        configPanel.setPrefHeight(450);
+        configPanel.setMinHeight(450);
         
         configSection.getChildren().addAll(sectionTitle, configPanel);
         return configSection;
@@ -226,23 +244,40 @@ public class EnhancedMainController implements Initializable {
      * Create the actions section.
      */
     private HBox createActionsSection() {
-        HBox actionsSection = new HBox(15);
+        HBox actionsSection = new HBox(20);
         actionsSection.setAlignment(Pos.CENTER);
-        actionsSection.setPadding(new Insets(10));
+        actionsSection.setPadding(new Insets(20, 15, 15, 15));
+        actionsSection.setStyle("-fx-background-color: #ffffff; -fx-border-radius: 12px; -fx-background-radius: 12px; " +
+                               "-fx-border-color: #dee2e6; -fx-border-width: 2px;");
         
-        Button previewBtn = new Button("Preview Migration");
+        // Section title
+        Text sectionTitle = new Text("🚀 Migration Actions");
+        sectionTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
+        sectionTitle.getStyleClass().add("section-title");
+        
+        // Action buttons container
+        HBox buttonContainer = new HBox(15);
+        buttonContainer.setAlignment(Pos.CENTER);
+        
+        Button previewBtn = new Button("👁️ Preview Migration");
         previewBtn.getStyleClass().add("primary-button");
         previewBtn.setOnAction(e -> previewMigration());
         
-        Button startMigrationBtn = new Button("Start Migration");
+        Button startMigrationBtn = new Button("▶️ Start Migration");
         startMigrationBtn.getStyleClass().add("primary-button");
         startMigrationBtn.setOnAction(e -> startMigration());
         
-        Button queueMigrationBtn = new Button("Add to Queue");
+        Button queueMigrationBtn = new Button("📋 Add to Queue");
         queueMigrationBtn.getStyleClass().add("button");
         queueMigrationBtn.setOnAction(e -> addToMigrationQueue());
         
-        actionsSection.getChildren().addAll(previewBtn, startMigrationBtn, queueMigrationBtn);
+        buttonContainer.getChildren().addAll(previewBtn, startMigrationBtn, queueMigrationBtn);
+        
+        VBox actionWrapper = new VBox(10);
+        actionWrapper.setAlignment(Pos.CENTER);
+        actionWrapper.getChildren().addAll(sectionTitle, buttonContainer);
+        
+        actionsSection.getChildren().add(actionWrapper);
         return actionsSection;
     }
     
@@ -250,42 +285,54 @@ public class EnhancedMainController implements Initializable {
      * Create the progress and log section.
      */
     private VBox createProgressSection() {
-        VBox progressSection = new VBox(10);
+        VBox progressSection = new VBox(15);
+        progressSection.setPadding(new Insets(15));
+        progressSection.setStyle("-fx-background-color: #ffffff; -fx-border-radius: 12px; -fx-background-radius: 12px; " +
+                                "-fx-border-color: #dee2e6; -fx-border-width: 2px;");
         
         // Section title
-        Text sectionTitle = new Text("Migration Progress & Logs");
-        sectionTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
+        Text sectionTitle = new Text("📊 Migration Progress & Logs");
+        sectionTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
         sectionTitle.getStyleClass().add("section-title");
         
         // Status and progress
-        HBox statusSection = new HBox(15);
+        HBox statusSection = new HBox(20);
         statusSection.setAlignment(Pos.CENTER_LEFT);
+        statusSection.setPadding(new Insets(10));
+        statusSection.setStyle("-fx-background-color: #f8f9fa; -fx-border-radius: 8px; -fx-background-radius: 8px;");
         
-        statusLabel = new Label("Ready");
+        Label statusLabel_ = new Label("📍 Status:");
+        statusLabel_.setFont(Font.font("System", FontWeight.BOLD, 14));
+        statusLabel_.getStyleClass().add("config-label");
+        
+        statusLabel = new Label("Ready to start migration");
         statusLabel.getStyleClass().add("status-label");
         
         progressBar = new ProgressBar();
-        progressBar.setPrefWidth(300);
+        progressBar.setPrefWidth(400);
+        progressBar.setMinWidth(400);
         progressBar.setVisible(false);
         
-        statusSection.getChildren().addAll(new Label("Status:"), statusLabel, progressBar);
+        statusSection.getChildren().addAll(statusLabel_, statusLabel, progressBar);
         
         // Log area
         logArea = new TextArea();
         logArea.setEditable(false);
-        logArea.setPrefRowCount(8);
+        logArea.setPrefRowCount(10);
+        logArea.setMinHeight(250);
         logArea.getStyleClass().add("log-area");
-        logArea.setPromptText("Migration logs will appear here...");
+        logArea.setPromptText("🔍 Migration logs will appear here...\n\nTips:\n• Drag and drop repositories to get started\n• Configure migration settings in the Configuration section\n• Use Preview to review changes before applying");
         
         // Log controls
-        HBox logControls = new HBox(10);
+        HBox logControls = new HBox(12);
         logControls.setAlignment(Pos.CENTER_LEFT);
+        logControls.setPadding(new Insets(8, 0, 0, 0));
         
-        Button clearLogsBtn = new Button("Clear Logs");
+        Button clearLogsBtn = new Button("🗑️ Clear Logs");
         clearLogsBtn.getStyleClass().add("button");
         clearLogsBtn.setOnAction(e -> logArea.clear());
         
-        Button exportLogsBtn = new Button("Export Logs");
+        Button exportLogsBtn = new Button("📤 Export Logs");
         exportLogsBtn.getStyleClass().add("button");
         exportLogsBtn.setOnAction(e -> exportLogs());
         
@@ -368,8 +415,23 @@ public class EnhancedMainController implements Initializable {
             protected void succeeded() {
                 RepositoryInfo repoInfo = getValue();
                 Platform.runLater(() -> {
+                    // Log detected framework and complexity for debugging
+                    logger.info("Repository analysis completed for '{}': Framework={}, Complexity={}", 
+                        repoInfo.getName(), 
+                        repoInfo.getDetectedFramework() != null ? repoInfo.getDetectedFramework().getDisplayName() : "null",
+                        repoInfo.getEstimatedComplexity());
+                    
                     repositories.add(repoInfo);
-                    appendLog("✅ Added repository: " + repoInfo.getName());
+                    
+                    // Force table refresh to ensure UI updates with new values
+                    if (repositoryTable != null) {
+                        repositoryTable.refresh();
+                    }
+                    
+                    appendLog(String.format("✅ Added repository: %s (Framework: %s, Complexity: %d)", 
+                        repoInfo.getName(),
+                        repoInfo.getDetectedFramework() != null ? repoInfo.getDetectedFramework().getDisplayName() : "Unknown",
+                        repoInfo.getEstimatedComplexity()));
                     statusLabel.textProperty().unbind();
                     statusLabel.setText("Repository added successfully");
                 });
@@ -822,7 +884,18 @@ public class EnhancedMainController implements Initializable {
                                 Platform.runLater(() -> {
                                     int index = repositories.indexOf(repo);
                                     if (index >= 0) {
+                                        // Log refresh results for debugging
+                                        logger.info("Refreshed repository '{}': Framework={}, Complexity={}", 
+                                            refreshed.getName(), 
+                                            refreshed.getDetectedFramework() != null ? refreshed.getDetectedFramework().getDisplayName() : "null",
+                                            refreshed.getEstimatedComplexity());
+                                            
                                         repositories.set(index, refreshed);
+                                        
+                                        // Force table refresh to ensure UI updates
+                                        if (repositoryTable != null) {
+                                            repositoryTable.refresh();
+                                        }
                                     }
                                 });
                             }

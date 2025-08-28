@@ -81,27 +81,37 @@ public class TransformationService {
         repoInfo.setLocalPath(repositoryPath);
         repoInfo.setCloneUrl("file://" + repositoryPath);
         
-        // Detect framework type
+        // Detect framework type with enhanced debugging
+        logger.debug("Starting framework detection for: {}", repositoryPath);
         FrameworkType framework = detectFrameworkType(repoDir);
+        logger.info("Framework detection completed - detected: {}", 
+            framework != null ? framework.getDisplayName() : "null");
         repoInfo.setDetectedFramework(framework);
         
         // Extract metadata based on framework
         Map<String, Object> metadata = extractFrameworkMetadata(repoDir, framework);
         
-        // Calculate complexity and size
-        repoInfo.setEstimatedComplexity(calculateComplexity(repoDir, framework));
+        // Calculate complexity and size with debugging
+        int complexity = calculateComplexity(repoDir, framework);
+        logger.debug("Calculated complexity: {}", complexity);
+        repoInfo.setEstimatedComplexity(complexity);
         repoInfo.setRepositorySize(calculateDirectorySize(repoDir));
         
         // Detect languages
         List<String> languages = detectLanguages(repoDir);
         if (!languages.isEmpty()) {
             repoInfo.setLanguage(languages.get(0)); // Primary language
+            logger.debug("Detected primary language: {}", languages.get(0));
         }
         
         // Set last commit date (simplified - would use Git API in real implementation)
         repoInfo.setLastCommitDate(LocalDateTime.now());
         
-        logger.info("Repository analysis completed for: {}", repoInfo.getName());
+        logger.info("Repository analysis completed for '{}': Framework={}, Complexity={}, Languages={}", 
+            repoInfo.getName(), 
+            framework != null ? framework.getDisplayName() : "null",
+            complexity,
+            languages.size());
         return repoInfo;
     }
     
