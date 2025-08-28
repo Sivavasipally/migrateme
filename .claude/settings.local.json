@@ -9,7 +9,8 @@
       "Bash(export:*)",
       "Bash(grep:*)",
       "Bash(chmod:*)",
-      "Bash(./fix-test-errors.sh:*)"
+      "Bash(./fix-test-errors.sh:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": [],

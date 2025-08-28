@@ -1,11 +1,14 @@
 package com.example.gitmigrator.service;
 
+import com.example.gitmigrator.model.FrameworkType;
 import com.example.gitmigrator.model.RepositoryInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -29,13 +32,22 @@ public class GitApiService {
     // Constructor for dependency injection
     public GitApiService(GitOperationService gitOperationService) {
         this.gitOperationService = gitOperationService;
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = createConfiguredObjectMapper();
     }
     
     // Default constructor for testing
     public GitApiService() {
         this.gitOperationService = new GitOperationService();
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = createConfiguredObjectMapper();
+    }
+    
+    /**
+     * Creates and configures ObjectMapper for proper JSON deserialization.
+     */
+    private ObjectMapper createConfiguredObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
 
     /**
@@ -218,6 +230,57 @@ public class GitApiService {
             return "bitbucket";
         } else {
             return "unknown";
+        }
+    }
+    
+    /**
+     * Clones and analyzes a remote repository for framework detection.
+     * Uses a temporary directory for analysis.
+     * 
+     * @param repositoryUrl The repository URL to clone
+     * @param token Personal access token for authentication (optional)
+     * @param transformationService Service to use for analysis
+     * @return RepositoryInfo with detected framework and metadata
+     */
+    public RepositoryInfo cloneAndAnalyzeRepository(String repositoryUrl, String token, 
+                                                   TransformationService transformationService) {
+        logger.info("Cloning and analyzing repository: {}", repositoryUrl);
+        
+        try {
+            // Clone repository to temporary location
+            File tempRepo = gitOperationService.cloneRepository(repositoryUrl, token);
+            if (tempRepo == null || !tempRepo.exists()) {
+                throw new RuntimeException("Failed to clone repository: " + repositoryUrl);
+            }
+            
+            // Analyze the cloned repository
+            RepositoryInfo analyzed = transformationService.analyzeRepository(tempRepo.getAbsolutePath());
+            
+            // Set original URL information
+            analyzed.setCloneUrl(repositoryUrl);
+            analyzed.setHtmlUrl(repositoryUrl);
+            
+            logger.info("Successfully analyzed repository: {} -> Framework: {}", 
+                repositoryUrl, analyzed.getDetectedFramework());
+            
+            return analyzed;
+            
+        } catch (Exception e) {
+            logger.error("Failed to clone and analyze repository {}: {}", repositoryUrl, e.getMessage());
+            
+            // Return repository info with unknown framework
+            RepositoryInfo errorRepo = new RepositoryInfo();
+            String name = repositoryUrl.substring(repositoryUrl.lastIndexOf('/') + 1);
+            if (name.endsWith(".git")) {
+                name = name.substring(0, name.length() - 4);
+            }
+            errorRepo.setName(name);
+            errorRepo.setCloneUrl(repositoryUrl);
+            errorRepo.setHtmlUrl(repositoryUrl);
+            errorRepo.setDetectedFramework(FrameworkType.UNKNOWN);
+            errorRepo.setEstimatedComplexity(1);
+            
+            return errorRepo;
         }
     }
 }

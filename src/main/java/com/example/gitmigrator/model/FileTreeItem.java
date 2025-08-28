@@ -7,7 +7,7 @@ import javafx.scene.control.TreeItem;
  */
 public class FileTreeItem extends TreeItem<String> {
     private final boolean isDirectory;
-    private final GeneratedFile generatedFile;
+    private GeneratedFile generatedFile;
     private final String fullPath;
     
     // Constructor for directory
@@ -18,6 +18,14 @@ public class FileTreeItem extends TreeItem<String> {
         this.fullPath = fullPath;
     }
     
+    // Constructor for directory (wizard)
+    public FileTreeItem(String name, boolean isDirectory) {
+        super(name);
+        this.isDirectory = isDirectory;
+        this.generatedFile = null;
+        this.fullPath = name;
+    }
+    
     // Constructor for file
     public FileTreeItem(GeneratedFile file) {
         super(file.getFileName());
@@ -26,12 +34,20 @@ public class FileTreeItem extends TreeItem<String> {
         this.fullPath = file.getRelativePath();
     }
     
+    public String getName() {
+        return getValue();
+    }
+    
     public boolean isDirectory() {
         return isDirectory;
     }
     
     public GeneratedFile getGeneratedFile() {
         return generatedFile;
+    }
+    
+    public void setGeneratedFile(GeneratedFile generatedFile) {
+        this.generatedFile = generatedFile;
     }
     
     public String getFullPath() {

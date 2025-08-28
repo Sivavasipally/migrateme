@@ -1,5 +1,6 @@
 package com.example.gitmigrator.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -11,6 +12,7 @@ import java.util.List;
  * Enhanced Data Transfer Object representing repository information from Git APIs.
  * Enhanced with JavaFX properties for UI binding and additional metadata.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RepositoryInfo {
     
     @JsonProperty("id")

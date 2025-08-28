@@ -48,6 +48,192 @@
     -fx-border-color: #495057;
 }
 
+/* Migration Wizard Styles */
+.wizard-container {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.wizard-header {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.wizard-step-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.wizard-progress {
+    -fx-accent: #007bff;
+    -fx-background-color: #e9ecef;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.wizard-progress .bar {
+    -fx-background-color: linear-gradient(to right, #007bff, #0056b3);
+    -fx-background-radius: 3px;
+}
+
+.wizard-navigation {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.wizard-back-button, .wizard-next-button, .wizard-finish-button, .wizard-cancel-button {
+    -fx-min-width: 80px;
+    -fx-pref-height: 35px;
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.wizard-back-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-border-color: #5a6268;
+    -fx-border-width: 1px;
+}
+
+.wizard-back-button:hover {
+    -fx-background-color: #5a6268;
+    -fx-border-color: #545b62;
+}
+
+.wizard-back-button:disabled {
+    -fx-background-color: #e9ecef;
+    -fx-text-fill: #6c757d;
+    -fx-border-color: #dee2e6;
+    -fx-opacity: 0.6;
+}
+
+.wizard-next-button, .wizard-finish-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-border-color: #0056b3;
+    -fx-border-width: 1px;
+}
+
+.wizard-next-button:hover, .wizard-finish-button:hover {
+    -fx-background-color: #0056b3;
+    -fx-border-color: #004085;
+}
+
+.wizard-cancel-button {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-border-color: #c82333;
+    -fx-border-width: 1px;
+}
+
+.wizard-cancel-button:hover {
+    -fx-background-color: #c82333;
+    -fx-border-color: #bd2130;
+}
+
+.wizard-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.wizard-step-container {
+    -fx-background-color: #ffffff;
+    -fx-spacing: 20px;
+}
+
+/* Step-specific styles */
+.wizard-section-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.wizard-section-description {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 12px;
+}
+
+.wizard-radio-button {
+    -fx-font-size: 13px;
+    -fx-text-fill: #495057;
+}
+
+.wizard-radio-button:selected {
+    -fx-text-fill: #007bff;
+    -fx-font-weight: bold;
+}
+
+.wizard-checkbox {
+    -fx-font-size: 13px;
+    -fx-text-fill: #495057;
+}
+
+.wizard-table-view {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-background-color: #ffffff;
+}
+
+.wizard-table-view .column-header {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #495057;
+    -fx-font-weight: bold;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1px 1px 0;
+}
+
+.wizard-table-view .table-cell {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1px 1px 0;
+    -fx-padding: 8px;
+}
+
+.wizard-preview-area {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Courier New', monospace;
+    -fx-font-size: 12px;
+}
+
+.wizard-log-area {
+    -fx-background-color: #212529;
+    -fx-text-fill: #f8f9fa;
+    -fx-border-color: #495057;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Courier New', monospace;
+    -fx-font-size: 11px;
+}
+
+.wizard-status-label {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 12px;
+}
+
+.wizard-progress-small {
+    -fx-accent: #28a745;
+    -fx-background-color: #e9ecef;
+    -fx-pref-height: 8px;
+}
+
+.wizard-progress-small .bar {
+    -fx-background-color: linear-gradient(to right, #28a745, #1e7e34);
+    -fx-background-radius: 4px;
+}
+
 .scroll-bar .thumb:pressed {
     -fx-background-color: #495057;
 }

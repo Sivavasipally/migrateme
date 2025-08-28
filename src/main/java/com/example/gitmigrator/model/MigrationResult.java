@@ -11,6 +11,14 @@ public class MigrationResult {
     private String message;
     private String errorDetails;
     private String errorMessage;
+    
+    // Additional wizard-specific fields
+    private RepositoryInfo repository;
+    private MigrationStatus status;
+    private String localPath;
+    private java.util.List<GeneratedFile> generatedFiles;
+    private String commitMessage;
+    private java.time.LocalDateTime executionTime;
 
     public String getErrorMessage() {
         // Prefer explicit errorDetails, fall back to message
@@ -78,4 +86,53 @@ public class MigrationResult {
     
     public String getErrorDetails() { return errorDetails; }
     public void setErrorDetails(String errorDetails) { this.errorDetails = errorDetails; }
+    
+    // Wizard-specific getters and setters
+    public RepositoryInfo getRepository() {
+        return repository;
+    }
+    
+    public void setRepository(RepositoryInfo repository) {
+        this.repository = repository;
+    }
+    
+    public MigrationStatus getStatus() {
+        return status;
+    }
+    
+    public void setStatus(MigrationStatus status) {
+        this.status = status;
+    }
+    
+    public String getLocalPath() {
+        return localPath;
+    }
+    
+    public void setLocalPath(String localPath) {
+        this.localPath = localPath;
+    }
+    
+    public java.util.List<GeneratedFile> getGeneratedFiles() {
+        return generatedFiles;
+    }
+    
+    public void setGeneratedFiles(java.util.List<GeneratedFile> generatedFiles) {
+        this.generatedFiles = generatedFiles;
+    }
+    
+    public String getCommitMessage() {
+        return commitMessage;
+    }
+    
+    public void setCommitMessage(String commitMessage) {
+        this.commitMessage = commitMessage;
+    }
+    
+    public java.time.LocalDateTime getExecutionTime() {
+        return executionTime;
+    }
+    
+    public void setExecutionTime(java.time.LocalDateTime executionTime) {
+        this.executionTime = executionTime;
+    }
 }

@@ -48,6 +48,55 @@ public class MigrationConfiguration {
     public boolean isEnableValidation() { return enableValidation; }
     public void setEnableValidation(boolean enableValidation) { this.enableValidation = enableValidation; }
     
+    // Wizard-specific convenience methods
+    public boolean isEnableCiCdPipeline() { 
+        return optionalComponents.contains("cicd"); 
+    }
+    
+    public void setEnableCiCdPipeline(boolean enable) {
+        if (enable) {
+            optionalComponents.add("cicd");
+        } else {
+            optionalComponents.remove("cicd");
+        }
+    }
+    
+    public boolean isEnableMonitoring() { 
+        return optionalComponents.contains("monitoring"); 
+    }
+    
+    public void setEnableMonitoring(boolean enable) {
+        if (enable) {
+            optionalComponents.add("monitoring");
+        } else {
+            optionalComponents.remove("monitoring");
+        }
+    }
+    
+    public boolean isEnableSecurityHardening() { 
+        return optionalComponents.contains("security"); 
+    }
+    
+    public void setEnableSecurityHardening(boolean enable) {
+        if (enable) {
+            optionalComponents.add("security");
+        } else {
+            optionalComponents.remove("security");
+        }
+    }
+    
+    public boolean isEnableDatabaseMigration() { 
+        return optionalComponents.contains("database"); 
+    }
+    
+    public void setEnableDatabaseMigration(boolean enable) {
+        if (enable) {
+            optionalComponents.add("database");
+        } else {
+            optionalComponents.remove("database");
+        }
+    }
+    
     // Convenience methods for optional components
     public boolean hasComponent(String component) {
         return optionalComponents.contains(component);

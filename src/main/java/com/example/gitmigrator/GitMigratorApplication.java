@@ -2,15 +2,18 @@ package com.example.gitmigrator;
 
 import com.example.gitmigrator.config.AppConfiguration;
 import com.example.gitmigrator.controller.EnhancedMainController;
+import com.example.gitmigrator.controller.MigrationWizardController;
 import com.example.gitmigrator.service.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Main JavaFX application class for the Git Repository Migrator.
@@ -44,31 +47,16 @@ public class GitMigratorApplication extends Application {
             // Initialize services
             initializeServices();
             
-            // Load FXML for enhanced UI
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/enhanced-main.fxml"));
+            // Ask user which interface to use
+            boolean useWizard = showInterfaceSelectionDialog();
             
-            // Create enhanced controller and inject dependencies
-            EnhancedMainController controller = new EnhancedMainController();
-            controller.setServices(gitApiService, migrationOrchestratorService, 
-                                 templateManagementService, transformationService);
-            controller.setEnhancedServices(migrationQueueService, gitServiceIntegration,
-                                         validationService, progressTrackingService, errorReportingService);
-            loader.setController(controller);
-            
-            // Load the scene
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
-            
-            // Configure stage for enhanced UI with better visibility
-            primaryStage.setTitle("🚀 Enhanced Git Repository Migrator - Containerization & DevOps Automation");
-            primaryStage.setScene(scene);
-            primaryStage.setMinWidth(1400);
-            primaryStage.setMinHeight(1000);
-            primaryStage.setMaximized(true);
-            primaryStage.centerOnScreen();
-            
-            // Show the application
-            primaryStage.show();
+            if (useWizard) {
+                // Launch wizard interface
+                launchWizardInterface(primaryStage);
+            } else {
+                // Launch enhanced interface (existing)
+                launchEnhancedInterface(primaryStage);
+            }
             
             logger.info("JavaFX Application started successfully");
             
@@ -76,6 +64,80 @@ public class GitMigratorApplication extends Application {
             logger.error("Failed to start JavaFX Application", e);
             throw new RuntimeException("Failed to load FXML", e);
         }
+    }
+    
+    /**
+     * Show dialog to let user choose between wizard and enhanced interface.
+     */
+    private boolean showInterfaceSelectionDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Git Repository Migrator");
+        alert.setHeaderText("Choose Interface Mode");
+        alert.setContentText("Would you like to use the guided wizard interface or the advanced interface?");
+        
+        ButtonType wizardButton = new ButtonType("🧙 Wizard (Recommended)", ButtonBar.ButtonData.YES);
+        ButtonType enhancedButton = new ButtonType("⚙️ Advanced Interface", ButtonBar.ButtonData.NO);
+        
+        alert.getButtonTypes().setAll(wizardButton, enhancedButton);
+        
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == wizardButton;
+    }
+    
+    /**
+     * Launch the wizard-based interface.
+     */
+    private void launchWizardInterface(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/migration-wizard.fxml"));
+        
+        // Create wizard controller and inject dependencies
+        MigrationWizardController controller = new MigrationWizardController();
+        // Initialize services would be called in controller's initialize method
+        loader.setController(controller);
+        
+        // Load the scene
+        Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        
+        // Configure stage for wizard
+        primaryStage.setTitle("🧙 Git Repository Migration Wizard");
+        primaryStage.setScene(scene);
+        primaryStage.setMinWidth(1200);
+        primaryStage.setMinHeight(800);
+        primaryStage.centerOnScreen();
+        primaryStage.show();
+        
+        logger.info("Wizard interface launched successfully");
+    }
+    
+    /**
+     * Launch the enhanced interface (existing functionality).
+     */
+    private void launchEnhancedInterface(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/enhanced-main.fxml"));
+        
+        // Create enhanced controller and inject dependencies
+        EnhancedMainController controller = new EnhancedMainController();
+        controller.setServices(gitApiService, migrationOrchestratorService, 
+                             templateManagementService, transformationService);
+        controller.setEnhancedServices(migrationQueueService, gitServiceIntegration,
+                                     validationService, progressTrackingService, errorReportingService);
+        loader.setController(controller);
+        
+        // Load the scene
+        Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        
+        // Configure stage for enhanced UI with better visibility
+        primaryStage.setTitle("🚀 Enhanced Git Repository Migrator - Containerization & DevOps Automation");
+        primaryStage.setScene(scene);
+        primaryStage.setMinWidth(1400);
+        primaryStage.setMinHeight(1000);
+        primaryStage.setMaximized(true);
+        primaryStage.centerOnScreen();
+        primaryStage.show();
+        
+        logger.info("Enhanced interface launched successfully");
     }
     
     /**
